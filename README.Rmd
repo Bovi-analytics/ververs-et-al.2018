@@ -10,11 +10,6 @@ This is a notebook for the dehorning data of Ververs et al. (2018). When you exe
 Currently the following R packages were loaded
 
 ```{r, echo=FALSE}
-#read excel file
-if (!require("openxlsx")) {
-  install.packages("openxlsx", dependencies = TRUE)
-  library(openxlsx)
-}
 #effects plot
 if (!require("effects")) {
   install.packages("effects", dependencies = TRUE)
@@ -43,7 +38,7 @@ if (!require("factoextra")) {
 
 ## Data extraction, transformation and loading
 
-The data was read from the excel file containing all dehorings, and some 
+The data was read from the excel file containing all dehornings, and some 
 
 ```{r, echo=FALSE}
 #Set correct path
@@ -139,7 +134,7 @@ summary(df.cv.final[df.cv.final$GENDER == "F", ])
 describe(df.cv.final[df.cv.final$GENDER == "F", ])
 ```
 
-##Only first dehoring descriptives
+##Only first dehorning descriptives
 
 ```{r}
 summary(df.cv.final[df.cv.final$N_DEHORNINGS == "1", ])

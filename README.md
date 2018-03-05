@@ -8,8 +8,6 @@ Statistical analysis preface
 
 Currently the following R packages were loaded
 
-    ## Loading required package: openxlsx
-
     ## Loading required package: effects
 
     ## Loading required package: carData
@@ -44,7 +42,7 @@ Currently the following R packages were loaded
 Data extraction, transformation and loading
 -------------------------------------------
 
-The data was read from the excel file containing all dehorings, and some
+The data was read from the excel file containing all dehornings, and some
 
 This has a first larger dataset is loaded in memory to start from.
 
@@ -536,8 +534,8 @@ describe(df.cv.final[df.cv.final$GENDER == "F", ])
     ## G_PH_L          10.00    9.99 20.66   467.61  0.01
     ## G_PH_C          86.67   86.64 19.77   398.97  0.14
 
-Only first dehoring descriptives
---------------------------------
+Only first dehorning descriptives
+---------------------------------
 
 ``` r
 summary(df.cv.final[df.cv.final$N_DEHORNINGS == "1", ])
