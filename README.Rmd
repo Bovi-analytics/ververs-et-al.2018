@@ -610,6 +610,8 @@ lsmeans(glm8, pairwise~ GENDER, type = "response")
 
 ### Data preparation
 
+Data needs to be scaled and centered
+
 ```{r}
 df.cv.mfa <- na.omit(df.cv[,c("GENDER",
                       "N_DEHORNINGS", 
@@ -637,14 +639,13 @@ cv.FAMD <- FAMD(df.cv.mfa)
 
 Show the eigenvalues and variance and vizualize
 
-
 ```{r}
 eig.val <- get_eigenvalue(cv.FAMD)
 head(eig.val)
 fviz_screeplot(cv.FAMD)
 ```
 
-Plot the variables and contribution
+Plot the variables and overall contribution
 
 ```{r}
 # Define the labels of tick marks
@@ -665,7 +666,7 @@ fviz_contrib(cv.FAMD, "var",
              axes = 2)
 ```
 
-Focus on the quantitative variables
+Contribution of the quantitative variables on dimension 1 and 2
 
 ```{r}
 quanti.var <- get_famd_var(cv.FAMD, "quanti.var")
@@ -677,7 +678,7 @@ fviz_famd_var(cv.FAMD, "quanti.var", col.var = "contrib",
              repel = TRUE)
 ```
 
-Focus on the qualitative variables
+Contribution of the qualitative variables
 
 ```{r}
 fviz_famd_var(cv.FAMD, "quali.var", col.var = "contrib", 
@@ -686,16 +687,6 @@ fviz_famd_var(cv.FAMD, "quali.var", col.var = "contrib",
 ```
              
 Plot the individual observations
-
-```{r}
-fviz_mfa_ind(cv.FAMD, 
-             #habillage = "Label", # color by groups 
-             palette = c("#00AFBB", "#E7B800", "#FC4E07"),
-             addEllipses = TRUE, 
-             ellipse.type = "confidence",
-             repel = FALSE # Avoid text overlapping
-             ) 
-```
 
 ```{r}
 flabels <- c("Number of dehornings", "Sex")
