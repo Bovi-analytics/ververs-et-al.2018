@@ -743,7 +743,15 @@ hist(df.cv[, c("DAYSDUE")],
 
 ![](README_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
-After data mining the aforementioned dataset, we decided to create a subset of COWS (number of dehornings larger than 1 with non-missing data for the following features: - Days since arrival at the farm at dehorning (proxy for age) - Quarter of dehorning (proxy for season) - Days since calving at dehorning - Calculated number of calvings - Quarter at calving - Number of dehornings - Total growth
+After data mining the aforementioned dataset, we decided to create a subset of COWS (number of dehornings larger than 1 with non-missing data for the following features:
+
+1.  Days since arrival at the farm at dehorning (proxy for age)
+2.  Quarter of dehorning (proxy for season)
+3.  Days since calving at dehorning
+4.  Calculated number of calvings
+5.  Quarter at calving
+6.  Number of dehornings
+7.  Total growth
 
 ``` r
 df.cv.cows <- na.omit(df.cv[!df.cv$N_DEHORNINGS == "1", c("CALC_ARRIVAL", "DH_QUARTER", "DIM_DEHORN", "CALC_PARITY", "C_QUARTER", "N_DEHORNINGS", "G_TOTAL")])
@@ -2923,6 +2931,8 @@ Multivariate analysis
 
 ### Data preparation
 
+Data needs to be scaled and centered
+
 ``` r
 df.cv.mfa <- na.omit(df.cv[,c("GENDER",
                       "N_DEHORNINGS", 
@@ -2987,7 +2997,7 @@ fviz_screeplot(cv.FAMD)
 
 ![](README_files/figure-markdown_github/unnamed-chunk-43-1.png)
 
-Plot the variables and contribution
+Plot the variables and overall contribution
 
 ``` r
 # Define the labels of tick marks
@@ -3020,7 +3030,7 @@ fviz_contrib(cv.FAMD, "var",
 
 ![](README_files/figure-markdown_github/unnamed-chunk-44-3.png)
 
-Focus on the quantitative variables
+Contribution of the quantitative variables on dimension 1 and 2
 
 ``` r
 quanti.var <- get_famd_var(cv.FAMD, "quanti.var")
@@ -3049,7 +3059,7 @@ fviz_famd_var(cv.FAMD, "quanti.var", col.var = "contrib",
 
 ![](README_files/figure-markdown_github/unnamed-chunk-45-2.png)
 
-Focus on the qualitative variables
+Contribution of the qualitative variables
 
 ``` r
 fviz_famd_var(cv.FAMD, "quali.var", col.var = "contrib", 
@@ -3062,18 +3072,6 @@ fviz_famd_var(cv.FAMD, "quali.var", col.var = "contrib",
 Plot the individual observations
 
 ``` r
-fviz_mfa_ind(cv.FAMD, 
-             #habillage = "Label", # color by groups 
-             palette = c("#00AFBB", "#E7B800", "#FC4E07"),
-             addEllipses = TRUE, 
-             ellipse.type = "confidence",
-             repel = FALSE # Avoid text overlapping
-             ) 
-```
-
-![](README_files/figure-markdown_github/unnamed-chunk-47-1.png)
-
-``` r
 flabels <- c("Number of dehornings", "Sex")
 
 fviz_ellipses(cv.FAMD, c("N_DEHORNINGS", "GENDER"), 
@@ -3084,4 +3082,4 @@ fviz_ellipses(cv.FAMD, c("N_DEHORNINGS", "GENDER"),
               )
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-48-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-47-1.png)

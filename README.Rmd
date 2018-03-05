@@ -165,13 +165,14 @@ hist(df.cv[, c("DAYSDUE")],
 ```
 
 After data mining the aforementioned dataset, we decided to create a subset of COWS (number of dehornings larger than 1 with non-missing data for the following features:
-- Days since arrival at the farm at dehorning (proxy for age)
-- Quarter of dehorning (proxy for season)
-- Days since calving at dehorning
-- Calculated number of calvings
-- Quarter at calving
-- Number of dehornings
-- Total growth
+
+1. Days since arrival at the farm at dehorning (proxy for age)
+2. Quarter of dehorning (proxy for season)
+3. Days since calving at dehorning
+4. Calculated number of calvings
+5. Quarter at calving
+6. Number of dehornings
+7. Total growth
 
 ```{r}
 df.cv.cows <- na.omit(df.cv[!df.cv$N_DEHORNINGS == "1", c("CALC_ARRIVAL", "DH_QUARTER", "DIM_DEHORN", "CALC_PARITY", "C_QUARTER", "N_DEHORNINGS", "G_TOTAL")])
