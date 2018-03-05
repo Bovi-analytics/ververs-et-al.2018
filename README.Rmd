@@ -315,7 +315,8 @@ df.cv.all <- na.omit(df.cv[df.cv$G_TOTAL < 100,
                                                 "GENDER", 
                                                 "G_TOTAL",
                                                 "N_DEHORNINGS",
-                                                "B_QUARTER"))])
+                                                "B_QUARTER"
+                                                ))])
 summary(df.cv.all)
 
 df.cv.all[df.cv.all$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
@@ -326,12 +327,24 @@ df.cv.all[df.cv.all$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
 ### Univariate model building
 
 ```{r, echo=FALSE}
-summary(baseline <- glm(G_TOTAL~ 1, df.cv.all, family = gaussian(link="log")))
-summary(glm2 <- glm(G_TOTAL~ N_DEHORNINGS, df.cv.all, family = gaussian(link="log")))
-summary(glm3 <- glm(G_TOTAL~ CALC_AGE, df.cv.all, family = gaussian(link="log")))
-summary(glm4 <- glm(G_TOTAL~ DH_QUARTER, df.cv.all, family = gaussian(link="log")))
-summary(glm5 <- glm(G_TOTAL~ B_QUARTER, df.cv.all, family = gaussian(link="log")))
-summary(glm6 <- glm(G_TOTAL~ GENDER, df.cv.all, family = gaussian(link="log")))
+summary(baseline <- glm(G_TOTAL~ 1, 
+                        df.cv.all, 
+                        family = gaussian(link="log")))
+summary(glm2 <- glm(G_TOTAL~ N_DEHORNINGS, 
+                    df.cv.all, 
+                    family = gaussian(link="log")))
+summary(glm3 <- glm(G_TOTAL~ CALC_AGE, 
+                    df.cv.all, 
+                    family = gaussian(link="log")))
+summary(glm4 <- glm(G_TOTAL~ DH_QUARTER, 
+                    df.cv.all, 
+                    family = gaussian(link="log")))
+summary(glm5 <- glm(G_TOTAL~ B_QUARTER, 
+                    df.cv.all, 
+                    family = gaussian(link="log")))
+summary(glm6 <- glm(G_TOTAL~ GENDER, 
+                    df.cv.all, 
+                    family = gaussian(link="log")))
 ```
 
 ### Model comparison
@@ -379,7 +392,7 @@ lsmeans(glm7, pairwise~ GENDER, type = "response")
 
 ```{r, echo=TRUE}
 df.cv.all.f <- na.omit(df.cv[df.cv$G_AH_W < 100,
-                             (names(df.cv) %in% c("CALC_AGE", 
+                             (names(df.cv) %in% c("CALC_AGE",
                                                   "DH_QUARTER", 
                                                   "GENDER", 
                                                   "G_AH_W",
@@ -401,18 +414,30 @@ hist(log10(df.cv.all.f$G_AH_W),
 ### Model building
 
 ```{r, echo=FALSE}
-summary(baseline <- glm(G_AH_W~ 1, df.cv.all.f, family = gaussian(link="log")))
-summary(glm2 <- glm(G_AH_W~ N_DEHORNINGS, df.cv.all.f, family = gaussian(link="log")))
-summary(glm3 <- glm(G_AH_W~ CALC_AGE, df.cv.all.f, family = gaussian(link="log")))
-summary(glm4 <- glm(G_AH_W~ DH_QUARTER, df.cv.all.f, family = gaussian(link="log")))
-summary(glm5 <- glm(G_AH_W~ B_QUARTER, df.cv.all.f, family = gaussian(link="log")))
-summary(glm6 <- glm(G_AH_W~ GENDER, df.cv.all.f, family = gaussian(link="log")))
+summary(baseline <- glm(G_AH_W~ 1, 
+                        df.cv.all.f, 
+                        family = gaussian(link="log")))
+summary(glm2 <- glm(G_AH_W~ N_DEHORNINGS, 
+                    df.cv.all.f, 
+                    family = gaussian(link="log")))
+summary(glm3 <- glm(G_AH_W~ CALC_AGE, 
+                    df.cv.all.f, 
+                    family = gaussian(link="log")))
+summary(glm4 <- glm(G_AH_W~ DH_QUARTER, 
+                    df.cv.all.f, 
+                    family = gaussian(link="log")))
+summary(glm5 <- glm(G_AH_W~ B_QUARTER, 
+                    df.cv.all.f, 
+                    family = gaussian(link="log")))
+summary(glm6 <- glm(G_AH_W~ GENDER, 
+                    df.cv.all.f, 
+                    family = gaussian(link="log")))
 ```
 
-### Feature selection
+### Model selection
 
 ```{r, echo=FALSE}
-anova(baseline, glm2, glm3, glm4, glm5, glm6, test = "Chisq")
+anova(baseline, glm2, glm3, glm4, glm4b, glm5, glm6, test = "Chisq")
 anova(baseline, glm2, test = "Chisq")
 anova(baseline, glm3, test = "Chisq")
 anova(baseline, glm4, test = "Chisq")
@@ -464,7 +489,8 @@ df.cv.all.f.l <- na.omit(df.cv[df.cv$G_AH_L < 10,
                                                     "GENDER", 
                                                     "G_AH_L",
                                                     "N_DEHORNINGS",
-                                                    "B_QUARTER"))])
+                                                    "B_QUARTER"
+                                                    ))])
 summary(df.cv.all.f.l)
 df.cv.all.f.l[df.cv.all.f.l$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
 df.cv.all.f.l[df.cv.all.f.l$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
@@ -483,7 +509,7 @@ hist(log10(df.cv.all.f.l$G_AH_L),
 summary(baseline <- glm(G_AH_L~ 1, df.cv.all.f.l, family = gaussian(link="log")))
 summary(glm2 <- glm(G_AH_L~ N_DEHORNINGS, df.cv.all.f.l, family = gaussian(link="log")))
 summary(glm3 <- glm(G_AH_L~ CALC_AGE, df.cv.all.f.l, family = gaussian(link="log")))
-summary(glm4 <- glm(G_AH_L~ DH_QUARTER, df.cv.all.f.l, family = gaussian(link="log")))
+summary(glm4 <- glm(G_AH_L~ DH_QUARTER, df.cv.all.f.l, family = gaussian(link="log"))
 summary(glm5 <- glm(G_AH_L~ B_QUARTER, df.cv.all.f.l, family = gaussian(link="log")))
 summary(glm6 <- glm(G_AH_L~ GENDER, df.cv.all.f.l, family = gaussian(link="log")))
 ```
@@ -538,7 +564,8 @@ df.cv.all.f.c <- na.omit(df.cv[df.cv$G_AH_C < 100,(names(df.cv) %in% c("CALC_AGE
                                                                      "GENDER", 
                                                                      "G_AH_C",
                                                                      "N_DEHORNINGS",
-                                                                     "B_QUARTER"))])
+                                                                     "B_QUARTER"
+                                                                     ))])
 df.cv.all.f.c[df.cv.all.f.c$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
 df.cv.all.f.c[df.cv.all.f.c$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
 summary(df.cv.all.f.c)
