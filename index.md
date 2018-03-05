@@ -741,7 +741,7 @@ hist(df.cv[, c("DAYSDUE")],
      xlab ="")
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 After data mining the aforementioned dataset, we decided to create a subset of COWS (number of dehornings larger than 1 with non-missing data for the following features: - Days since arrival at the farm at dehorning (proxy for age) - Quarter of dehorning (proxy for season) - Days since calving at dehorning - Calculated number of calvings - Quarter at calving - Number of dehornings - Total growth
 
@@ -783,7 +783,7 @@ hist(log10(df.cv.cows$G_TOTAL),
      xlab = "")
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
 op = par(mfrow=c(1, 1))
@@ -792,7 +792,7 @@ hist(df.cv.cows$CALC_ARRIVAL,
      xlab ="")
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-9-2.png)
+![](index_files/figure-markdown_github/unnamed-chunk-9-2.png)
 
 ``` r
 op = par(mfrow=c(2, 2))
@@ -810,7 +810,7 @@ hist(log10(df.cv.cows[df.cv.cows$N_DEHORNINGS == "3",]$G_TOTAL),
      xlab ="Dehorning 3")
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-9-3.png)
+![](index_files/figure-markdown_github/unnamed-chunk-9-3.png)
 
 ### Model building
 
@@ -1131,7 +1131,7 @@ plot(effect("N_DEHORNINGS:CALC_ARRIVAL",
      ylab = "Total growth (g/day)")
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-14-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
 ### Final model least square means
 
@@ -1658,7 +1658,7 @@ hist(log10(df.cv.all.f$G_AH_W),
      xlab ="")
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-23-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-23-1.png)
 
 ### Model building
 
@@ -1993,7 +1993,7 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
      xlab = "Age")
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-27-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-27-1.png)
 
 ### Final model least square means
 
@@ -2098,7 +2098,7 @@ hist(log10(df.cv.all.f.l$G_AH_L),
      xlab ="")
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-29-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-29-1.png)
 
 ### Model building
 
@@ -2425,7 +2425,7 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
             multiline=TRUE))
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-33-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-33-1.png)
 
 ### Final model least square means
 
@@ -2527,7 +2527,7 @@ hist(log10(df.cv.all.f.c$G_AH_C),
      xlab ="")
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-35-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-35-1.png)
 
 ### Model building
 
@@ -2858,7 +2858,7 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
             xlab = "Age")
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-39-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-39-1.png)
 
 ### Final model least square means
 
@@ -2965,7 +2965,7 @@ describe(df.cv.mfa)
 cv.FAMD <- FAMD(df.cv.mfa)
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-42-1.png)![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-42-2.png)![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-42-3.png)![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-42-4.png)![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-42-5.png)
+![](index_files/figure-markdown_github/unnamed-chunk-42-1.png)![](index_files/figure-markdown_github/unnamed-chunk-42-2.png)![](index_files/figure-markdown_github/unnamed-chunk-42-3.png)![](index_files/figure-markdown_github/unnamed-chunk-42-4.png)![](index_files/figure-markdown_github/unnamed-chunk-42-5.png)
 
 Show the eigenvalues and variance and vizualize
 
@@ -2985,7 +2985,7 @@ head(eig.val)
 fviz_screeplot(cv.FAMD)
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-43-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-43-1.png)
 
 Plot the variables and contribution
 
@@ -3001,7 +3001,7 @@ DIM1 <- c("Anterior horn growth",
 fviz_famd_var(cv.FAMD, repel = TRUE)
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-44-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-44-1.png)
 
 ``` r
 # Contribution to the first dimension
@@ -3010,7 +3010,7 @@ fviz_contrib(cv.FAMD, "var",
              x.lab = DIM1)
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-44-2.png)
+![](index_files/figure-markdown_github/unnamed-chunk-44-2.png)
 
 ``` r
 # Contribution to the second dimension
@@ -3018,7 +3018,7 @@ fviz_contrib(cv.FAMD, "var",
              axes = 2)
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-44-3.png)
+![](index_files/figure-markdown_github/unnamed-chunk-44-3.png)
 
 Focus on the quantitative variables
 
@@ -3039,7 +3039,7 @@ fviz_famd_var(cv.FAMD, "quanti.var", repel = TRUE,
               col.var = "black")
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-45-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-45-1.png)
 
 ``` r
 fviz_famd_var(cv.FAMD, "quanti.var", col.var = "contrib", 
@@ -3047,7 +3047,7 @@ fviz_famd_var(cv.FAMD, "quanti.var", col.var = "contrib",
              repel = TRUE)
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-45-2.png)
+![](index_files/figure-markdown_github/unnamed-chunk-45-2.png)
 
 Focus on the qualitative variables
 
@@ -3057,7 +3057,7 @@ fviz_famd_var(cv.FAMD, "quali.var", col.var = "contrib",
              )
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-46-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-46-1.png)
 
 Plot the individual observations
 
@@ -3071,7 +3071,7 @@ fviz_mfa_ind(cv.FAMD,
              ) 
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-47-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-47-1.png)
 
 ``` r
 flabels <- c("Number of dehornings", "Sex")
@@ -3084,4 +3084,4 @@ fviz_ellipses(cv.FAMD, c("N_DEHORNINGS", "GENDER"),
               )
 ```
 
-![](PublicNotebook_files/figure-markdown_github/unnamed-chunk-48-1.png)
+![](index_files/figure-markdown_github/unnamed-chunk-48-1.png)
