@@ -1,8 +1,6 @@
 ---
 title: "The effect of dehorning and other potential factors influencing horn growth in game-ranched white rhinoceroses (Ceratotherium simum simum)"
-output:
-  html_document: default
-  html_notebook: default
+output: github_document
 ---
 
 This is a notebook for the dehorning data of Ververs et al. (2018). When you execute code within the notebook, the results appear beneath the code. 
