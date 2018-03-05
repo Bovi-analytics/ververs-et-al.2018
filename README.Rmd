@@ -317,10 +317,9 @@ df.cv.all <- na.omit(df.cv[df.cv$G_TOTAL < 100,
                                                 "N_DEHORNINGS",
                                                 "B_QUARTER"
                                                 ))])
-summary(df.cv.all)
-
 df.cv.all[df.cv.all$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
 df.cv.all[df.cv.all$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
+summary(df.cv.all)
 
 ```
 
@@ -437,7 +436,7 @@ summary(glm6 <- glm(G_AH_W~ GENDER,
 ### Model selection
 
 ```{r, echo=FALSE}
-anova(baseline, glm2, glm3, glm4, glm4b, glm5, glm6, test = "Chisq")
+anova(baseline, glm2, glm3, glm4, glm5, glm6, test = "Chisq")
 anova(baseline, glm2, test = "Chisq")
 anova(baseline, glm3, test = "Chisq")
 anova(baseline, glm4, test = "Chisq")
@@ -491,9 +490,9 @@ df.cv.all.f.l <- na.omit(df.cv[df.cv$G_AH_L < 10,
                                                     "N_DEHORNINGS",
                                                     "B_QUARTER"
                                                     ))])
-summary(df.cv.all.f.l)
 df.cv.all.f.l[df.cv.all.f.l$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
 df.cv.all.f.l[df.cv.all.f.l$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
+summary(df.cv.all.f.l)
 op = par(mfrow=c(1, 2))
 hist(df.cv.all.f.l$G_AH_L,
      main = "Anterior horn length growth (mm/day)",
@@ -509,7 +508,7 @@ hist(log10(df.cv.all.f.l$G_AH_L),
 summary(baseline <- glm(G_AH_L~ 1, df.cv.all.f.l, family = gaussian(link="log")))
 summary(glm2 <- glm(G_AH_L~ N_DEHORNINGS, df.cv.all.f.l, family = gaussian(link="log")))
 summary(glm3 <- glm(G_AH_L~ CALC_AGE, df.cv.all.f.l, family = gaussian(link="log")))
-summary(glm4 <- glm(G_AH_L~ DH_QUARTER, df.cv.all.f.l, family = gaussian(link="log"))
+summary(glm4 <- glm(G_AH_L~ DH_QUARTER, df.cv.all.f.l, family = gaussian(link="log")))
 summary(glm5 <- glm(G_AH_L~ B_QUARTER, df.cv.all.f.l, family = gaussian(link="log")))
 summary(glm6 <- glm(G_AH_L~ GENDER, df.cv.all.f.l, family = gaussian(link="log")))
 ```

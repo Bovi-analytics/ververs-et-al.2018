@@ -1231,16 +1231,19 @@ df.cv.all <- na.omit(df.cv[df.cv$G_TOTAL < 100,
                                                 "GENDER", 
                                                 "G_TOTAL",
                                                 "N_DEHORNINGS",
-                                                "B_QUARTER"))])
+                                                "B_QUARTER"
+                                                ))])
+df.cv.all[df.cv.all$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
+df.cv.all[df.cv.all$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
 summary(df.cv.all)
 ```
 
     ##  GENDER     CALC_AGE      DH_QUARTER B_QUARTER N_DEHORNINGS
     ##  F:498   Min.   :  58.0   1:154      1:397     1:597       
     ##  M:588   1st Qu.: 921.8   2:297      2:313     2:315       
-    ##          Median :1375.0   3:275      3:183     3:140       
-    ##          Mean   :1552.5   4:360      4:193     4: 31       
-    ##          3rd Qu.:1964.0                        5:  3       
+    ##          Median :1375.0   3:275      3:183     3:174       
+    ##          Mean   :1552.5   4:360      4:193     4:  0       
+    ##          3rd Qu.:1964.0                        5:  0       
     ##          Max.   :5909.0                                    
     ##     G_TOTAL        
     ##  Min.   : 0.01195  
@@ -1249,11 +1252,6 @@ summary(df.cv.all)
     ##  Mean   : 1.99431  
     ##  3rd Qu.: 2.74384  
     ##  Max.   :33.02857
-
-``` r
-df.cv.all[df.cv.all$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
-df.cv.all[df.cv.all$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
-```
 
 ### Univariate model building
 
@@ -1629,7 +1627,7 @@ Hypothesis 3: Factors influencing the growth of the anterior horn weight in male
 
 ``` r
 df.cv.all.f <- na.omit(df.cv[df.cv$G_AH_W < 100,
-                             (names(df.cv) %in% c("CALC_AGE", 
+                             (names(df.cv) %in% c("CALC_AGE",
                                                   "DH_QUARTER", 
                                                   "GENDER", 
                                                   "G_AH_W",
@@ -1817,7 +1815,7 @@ hist(log10(df.cv.all.f$G_AH_W),
     ## 
     ## Number of Fisher Scoring iterations: 6
 
-### Feature selection
+### Model selection
 
     ## Analysis of Deviance Table
     ## 
@@ -2075,16 +2073,19 @@ df.cv.all.f.l <- na.omit(df.cv[df.cv$G_AH_L < 10,
                                                     "GENDER", 
                                                     "G_AH_L",
                                                     "N_DEHORNINGS",
-                                                    "B_QUARTER"))])
+                                                    "B_QUARTER"
+                                                    ))])
+df.cv.all.f.l[df.cv.all.f.l$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
+df.cv.all.f.l[df.cv.all.f.l$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
 summary(df.cv.all.f.l)
 ```
 
     ##  GENDER     CALC_AGE      DH_QUARTER B_QUARTER N_DEHORNINGS
     ##  F:494   Min.   :  58.0   1:152      1:394     1:590       
     ##  M:584   1st Qu.: 926.2   2:294      2:308     2:314       
-    ##          Median :1381.0   3:273      3:183     3:140       
-    ##          Mean   :1557.9   4:359      4:193     4: 31       
-    ##          3rd Qu.:1966.8                        5:  3       
+    ##          Median :1381.0   3:273      3:183     3:174       
+    ##          Mean   :1557.9   4:359      4:193     4:  0       
+    ##          3rd Qu.:1966.8                        5:  0       
     ##          Max.   :5909.0                                    
     ##      G_AH_L       
     ##  Min.   :0.01447  
@@ -2095,8 +2096,6 @@ summary(df.cv.all.f.l)
     ##  Max.   :2.71429
 
 ``` r
-df.cv.all.f.l[df.cv.all.f.l$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
-df.cv.all.f.l[df.cv.all.f.l$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
 op = par(mfrow=c(1, 2))
 hist(df.cv.all.f.l$G_AH_L,
      main = "Anterior horn length growth (mm/day)",
@@ -2504,7 +2503,8 @@ df.cv.all.f.c <- na.omit(df.cv[df.cv$G_AH_C < 100,(names(df.cv) %in% c("CALC_AGE
                                                                      "GENDER", 
                                                                      "G_AH_C",
                                                                      "N_DEHORNINGS",
-                                                                     "B_QUARTER"))])
+                                                                     "B_QUARTER"
+                                                                     ))])
 df.cv.all.f.c[df.cv.all.f.c$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
 df.cv.all.f.c[df.cv.all.f.c$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
 summary(df.cv.all.f.c)
