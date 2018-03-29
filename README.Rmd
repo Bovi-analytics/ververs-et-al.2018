@@ -141,6 +141,20 @@ summary(df.cv.final[df.cv.final$N_DEHORNINGS == "1", ])
 describe(df.cv.final[df.cv.final$N_DEHORNINGS == "1", ])
 ```
 
+##Second dehorning descriptives
+
+```{r}
+summary(df.cv.final[df.cv.final$N_DEHORNINGS == "2", ])
+describe(df.cv.final[df.cv.final$N_DEHORNINGS == "2", ])
+```
+
+##Later dehorning descriptives
+
+```{r}
+summary(df.cv.final[!df.cv.final$N_DEHORNINGS  %in% c("1", "2"),])
+describe(df.cv.final[!df.cv.final$N_DEHORNINGS  %in% c("1", "2"),])
+```
+
 #Data analyis
 
 Next, subsets are constructed for the separate hypothesis.
@@ -175,6 +189,7 @@ summary(df.cv.cows)
 #Set all number of dehornings larger then 3 equal to 3 
 df.cv.cows[df.cv.cows$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
 df.cv.cows[df.cv.cows$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
+
 ```
 
 Some histograms to increase interpretation of the current dataset

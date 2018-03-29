@@ -701,6 +701,328 @@ describe(df.cv.final[df.cv.final$N_DEHORNINGS == "1", ])
     ## G_PH_L           0.11    0.10  1.01     1.28  0.00
     ## G_PH_C           1.24    1.22  0.78     3.26  0.01
 
+Second dehorning descriptives
+-----------------------------
+
+``` r
+summary(df.cv.final[df.cv.final$N_DEHORNINGS == "2", ])
+```
+
+    ##   GENDER        AH_W_G         PH_W_G        SHAVINGS_W_G   
+    ##  F   :430   Min.   :  12   Min.   :  23.0   Min.   : 11.00  
+    ##  M   :218   1st Qu.: 963   1st Qu.: 157.5   1st Qu.: 80.75  
+    ##  NA's:  2   Median :1303   Median : 251.0   Median :108.50  
+    ##             Mean   :1355   Mean   : 294.6   Mean   :116.50  
+    ##             3rd Qu.:1629   3rd Qu.: 365.0   3rd Qu.:142.00  
+    ##             Max.   :4412   Max.   :1359.0   Max.   :347.00  
+    ##             NA's   :4      NA's   :23       NA's   :58      
+    ##      TOTAL           AH_L            AH_C       AH_STUMP_L    
+    ##  Min.   :  12   Min.   : 27.0   Min.   :160   Min.   : 40.00  
+    ##  1st Qu.:1204   1st Qu.:105.0   1st Qu.:545   1st Qu.: 80.00  
+    ##  Median :1656   Median :125.0   Median :600   Median : 85.00  
+    ##  Mean   :1742   Mean   :129.2   Mean   :593   Mean   : 86.61  
+    ##  3rd Qu.:2132   3rd Qu.:150.0   3rd Qu.:650   3rd Qu.: 95.00  
+    ##  Max.   :5494   Max.   :280.0   Max.   :840   Max.   :140.00  
+    ##  NA's   :2      NA's   :15      NA's   :25    NA's   :59      
+    ##       PH_L             PH_C         PH_STUMP_L       CALC_AGE   
+    ##  Min.   : 15.00   Min.   : 52.0   Min.   :10.00   Min.   : 778  
+    ##  1st Qu.: 35.00   1st Qu.:460.0   1st Qu.:20.00   1st Qu.:1340  
+    ##  Median : 45.00   Median :520.0   Median :30.00   Median :1554  
+    ##  Mean   : 46.45   Mean   :509.7   Mean   :28.13   Mean   :1767  
+    ##  3rd Qu.: 55.00   3rd Qu.:580.0   3rd Qu.:35.00   3rd Qu.:1868  
+    ##  Max.   :160.00   Max.   :780.0   Max.   :80.00   Max.   :5909  
+    ##  NA's   :21       NA's   :24      NA's   :65      NA's   :334   
+    ##   CALC_ARRIVAL     DH_YEAR       DH_MONTH   DH_QUARTER     W_DIFF    
+    ##  Min.   :  16   2015   :187   9      : 92   1   : 84   Min.   : 348  
+    ##  1st Qu.: 706   2014   :180   11     : 83   2   :196   1st Qu.: 811  
+    ##  Median :1022   2013   :146   5      : 82   3   :167   Median :1058  
+    ##  Mean   :1073   2012   :111   6      : 73   4   :201   Mean   :1092  
+    ##  3rd Qu.:1358   2011   : 16   12     : 68   NA's:  2   3rd Qu.:1285  
+    ##  Max.   :5468   (Other):  8   (Other):250              Max.   :3330  
+    ##  NA's   :133    NA's   :  2   NA's   :  2              NA's   :25    
+    ##      L_DIFF           C_DIFF           B_YEAR       B_MONTH    B_QUARTER 
+    ##  Min.   : -3.00   Min.   :-95.00   2011   : 73   3      : 48   1   :111  
+    ##  1st Qu.: 60.00   1st Qu.: 45.00   2010   : 68   4      : 37   2   : 93  
+    ##  Median : 80.00   Median : 80.00   2008   : 60   6      : 36   3   : 58  
+    ##  Mean   : 83.17   Mean   : 82.79   2012   : 35   2      : 33   4   : 54  
+    ##  3rd Qu.:100.00   3rd Qu.:120.00   2009   : 29   1      : 30   NA's:334  
+    ##  Max.   :230.00   Max.   :608.00   (Other): 51   (Other):132             
+    ##  NA's   :23       NA's   :26       NA's   :334   NA's   :334             
+    ##    DIM_DEHORN       INT_DEHORN     CALC_PARITY     C_YEAR       C_MONTH   
+    ##  Min.   :   7.0   Min.   :   0.0   0   :405    2012   : 74   2      : 38  
+    ##  1st Qu.: 280.0   1st Qu.: 448.0   1   :132    2013   : 57   3      : 35  
+    ##  Median : 503.0   Median : 580.0   2   : 81    2011   : 53   1      : 33  
+    ##  Mean   : 549.6   Mean   : 594.4   3   : 28    2014   : 34   4      : 33  
+    ##  3rd Qu.: 724.0   3rd Qu.: 720.2   4   :  2    2010   : 14   12     : 30  
+    ##  Max.   :1770.0   Max.   :1335.0   NA's:  2    (Other): 11   (Other): 74  
+    ##  NA's   :407      NA's   :2                    NA's   :407   NA's   :407  
+    ##  C_QUARTER  N_DEHORNINGS    GR_DAYS          G_TOTAL        
+    ##  1   :106   1   :  0     Min.   :   0.0   Min.   :  0.0511  
+    ##  2   : 56   2   :648     1st Qu.: 448.0   1st Qu.:  2.1389  
+    ##  3   : 51   3   :  0     Median : 580.0   Median :  2.6757  
+    ##  4   : 30   4   :  0     Mean   : 594.4   Mean   :  3.9411  
+    ##  NA's:407   5   :  0     3rd Qu.: 720.2   3rd Qu.:  3.5625  
+    ##             NA's:  2     Max.   :1335.0   Max.   :332.6667  
+    ##                          NA's   :2        NA's   :3         
+    ##      G_AH_W              G_AH_L             G_AH_C        
+    ##  Min.   :  0.05112   Min.   : 0.06522   Min.   :  0.1573  
+    ##  1st Qu.:  1.70190   1st Qu.: 0.17857   1st Qu.:  0.8107  
+    ##  Median :  2.12825   Median : 0.22412   Median :  0.9770  
+    ##  Mean   :  3.03456   Mean   : 0.26914   Mean   :  1.3018  
+    ##  3rd Qu.:  2.78798   3rd Qu.: 0.27356   3rd Qu.:  1.2758  
+    ##  Max.   :246.33333   Max.   :12.50000   Max.   :111.6667  
+    ##  NA's   :5           NA's   :16         NA's   :26        
+    ##      G_PH_W             G_PH_L            G_PH_C        
+    ##  Min.   : 0.03932   Min.   :0.02408   Min.   : 0.07439  
+    ##  1st Qu.: 0.26451   1st Qu.:0.06074   1st Qu.: 0.67227  
+    ##  Median : 0.39969   Median :0.07435   Median : 0.83449  
+    ##  Mean   : 0.75066   Mean   :0.09806   Mean   : 1.10213  
+    ##  3rd Qu.: 0.61382   3rd Qu.:0.09440   3rd Qu.: 1.10512  
+    ##  Max.   :86.33333   Max.   :5.00000   Max.   :86.66667  
+    ##  NA's   :24         NA's   :22        NA's   :25
+
+``` r
+describe(df.cv.final[df.cv.final$N_DEHORNINGS == "2", ])
+```
+
+    ##               vars   n    mean     sd  median trimmed    mad    min
+    ## GENDER*          1 648    1.34   0.47    1.00    1.30   0.00   1.00
+    ## AH_W_G           2 646 1354.83 559.81 1303.00 1309.95 492.22  12.00
+    ## PH_W_G           3 627  294.59 204.24  251.00  265.17 149.74  23.00
+    ## SHAVINGS_W_G     4 592  116.50  48.94  108.50  112.32  45.22  11.00
+    ## TOTAL            5 648 1742.13 760.46 1655.50 1683.42 690.15  12.00
+    ## AH_L             6 635  129.15  34.00  125.00  126.89  37.06  27.00
+    ## AH_C             7 625  592.98  89.90  600.00  597.25  74.13 160.00
+    ## AH_STUMP_L       8 591   86.61  14.30   85.00   86.05  14.83  40.00
+    ## PH_L             9 629   46.45  15.67   45.00   45.29  14.83  15.00
+    ## PH_C            10 626  509.67 106.82  520.00  516.64  88.96  52.00
+    ## PH_STUMP_L      11 585   28.13  10.22   30.00   27.70  14.83  10.00
+    ## CALC_AGE        12 316 1766.76 749.66 1554.50 1626.83 341.00 778.00
+    ## CALC_ARRIVAL    13 517 1072.92 497.79 1022.00 1037.38 492.22  16.00
+    ## DH_YEAR*        14 648    4.67   1.17    5.00    4.73   1.48   2.00
+    ## DH_MONTH*       15 648    7.39   3.19    7.00    7.50   4.45   1.00
+    ## DH_QUARTER*     16 648    2.75   1.03    3.00    2.81   1.48   1.00
+    ## W_DIFF          17 625 1092.21 388.43 1058.00 1056.43 352.86 348.00
+    ## L_DIFF          18 627   83.17  29.10   80.00   81.65  29.65  -3.00
+    ## C_DIFF          19 624   82.79  57.10   80.00   82.57  59.30 -95.00
+    ## B_YEAR*         20 316   10.22   2.34   11.00   10.52   1.48   1.00
+    ## B_MONTH*        21 316    5.64   3.39    5.00    5.45   4.45   1.00
+    ## B_QUARTER*      22 316    2.17   1.09    2.00    2.09   1.48   1.00
+    ## DIM_DEHORN      23 243  549.62 336.04  503.00  518.67 329.14   7.00
+    ## INT_DEHORN      24 648  594.39 214.89  580.00  586.05 201.63   0.00
+    ## CALC_PARITY*    25 648    1.60   0.89    1.00    1.43   0.00   1.00
+    ## C_YEAR*         26 243    6.27   1.26    6.00    6.26   1.48   3.00
+    ## C_MONTH*        27 243    5.50   3.91    4.00    5.26   2.97   1.00
+    ## C_QUARTER*      28 243    2.02   1.07    2.00    1.90   1.48   1.00
+    ## N_DEHORNINGS*   29 648    2.00   0.00    2.00    2.00   0.00   2.00
+    ## GR_DAYS         30 648  594.39 214.89  580.00  586.05 201.63   0.00
+    ## G_TOTAL         31 647    3.94  13.39    2.68    2.86   1.01   0.05
+    ## G_AH_W          32 645    3.03   9.91    2.13    2.24   0.75   0.05
+    ## G_AH_L          33 634    0.27   0.53    0.22    0.22   0.07   0.07
+    ## G_AH_C          34 624    1.30   4.49    0.98    1.03   0.31   0.16
+    ## G_PH_W          35 626    0.75   3.56    0.40    0.45   0.24   0.04
+    ## G_PH_L          36 628    0.10   0.22    0.07    0.08   0.02   0.02
+    ## G_PH_C          37 625    1.10   3.49    0.83    0.88   0.30   0.07
+    ##                   max   range  skew kurtosis    se
+    ## GENDER*          2.00    1.00  0.69    -1.53  0.02
+    ## AH_W_G        4412.00 4400.00  1.10     3.06 22.03
+    ## PH_W_G        1359.00 1336.00  1.70     3.86  8.16
+    ## SHAVINGS_W_G   347.00  336.00  1.05     1.99  2.01
+    ## TOTAL         5494.00 5482.00  1.00     2.32 29.87
+    ## AH_L           280.00  253.00  0.73     0.95  1.35
+    ## AH_C           840.00  680.00 -0.54     1.18  3.60
+    ## AH_STUMP_L     140.00  100.00  0.33     0.82  0.59
+    ## PH_L           160.00  145.00  1.16     4.33  0.62
+    ## PH_C           780.00  728.00 -0.70     1.13  4.27
+    ## PH_STUMP_L      80.00   70.00  0.69     1.23  0.42
+    ## CALC_AGE      5909.00 5131.00  2.42     7.10 42.17
+    ## CALC_ARRIVAL  5468.00 5452.00  1.68    10.67 21.89
+    ## DH_YEAR*         7.00    5.00 -0.31    -0.90  0.05
+    ## DH_MONTH*       12.00   11.00 -0.19    -1.08  0.13
+    ## DH_QUARTER*      4.00    3.00 -0.19    -1.19  0.04
+    ## W_DIFF        3330.00 2982.00  1.28     3.39 15.54
+    ## L_DIFF         230.00  233.00  0.57     0.92  1.16
+    ## C_DIFF         608.00  703.00  1.42    12.03  2.29
+    ## B_YEAR*         14.00   13.00 -1.25     1.64  0.13
+    ## B_MONTH*        12.00   11.00  0.42    -1.03  0.19
+    ## B_QUARTER*       4.00    3.00  0.44    -1.13  0.06
+    ## DIM_DEHORN    1770.00 1763.00  0.92     0.92 21.56
+    ## INT_DEHORN    1335.00 1335.00  0.32     0.62  8.44
+    ## CALC_PARITY*     5.00    4.00  1.36     0.91  0.03
+    ## C_YEAR*          9.00    6.00  0.08    -0.45  0.08
+    ## C_MONTH*        12.00   11.00  0.52    -1.30  0.25
+    ## C_QUARTER*       4.00    3.00  0.56    -1.04  0.07
+    ## N_DEHORNINGS*    2.00    0.00   NaN      NaN  0.00
+    ## GR_DAYS       1335.00 1335.00  0.32     0.62  8.44
+    ## G_TOTAL        332.67  332.62 22.96   558.16  0.53
+    ## G_AH_W         246.33  246.28 23.03   560.33  0.39
+    ## G_AH_L          12.50   12.43 20.07   452.66  0.02
+    ## G_AH_C         111.67  111.51 23.88   583.41  0.18
+    ## G_PH_W          86.33   86.29 22.39   533.20  0.14
+    ## G_PH_L           5.00    4.98 18.19   373.38  0.01
+    ## G_PH_C          86.67   86.59 23.55   572.05  0.14
+
+Later dehorning descriptives
+----------------------------
+
+``` r
+summary(df.cv.final[!df.cv.final$N_DEHORNINGS  %in% c("1", "2"),])
+```
+
+    ##  GENDER      AH_W_G         PH_W_G        SHAVINGS_W_G       TOTAL     
+    ##  F:201   Min.   :   5   Min.   :  47.0   Min.   : 22.0   Min.   :   5  
+    ##  M:138   1st Qu.:1262   1st Qu.: 226.0   1st Qu.:110.0   1st Qu.:1627  
+    ##          Median :1520   Median : 315.0   Median :133.0   Median :1982  
+    ##          Mean   :1605   Mean   : 391.4   Mean   :139.8   Mean   :2113  
+    ##          3rd Qu.:1892   3rd Qu.: 494.0   3rd Qu.:167.2   3rd Qu.:2480  
+    ##          Max.   :4654   Max.   :1979.0   Max.   :322.0   Max.   :6633  
+    ##                         NA's   :6        NA's   :39                    
+    ##       AH_L            AH_C         AH_STUMP_L          PH_L       
+    ##  Min.   : 60.0   Min.   :340.0   Min.   : 55.00   Min.   : 10.00  
+    ##  1st Qu.:110.0   1st Qu.:585.0   1st Qu.: 80.00   1st Qu.: 40.00  
+    ##  Median :135.0   Median :630.0   Median : 90.00   Median : 50.00  
+    ##  Mean   :138.9   Mean   :619.9   Mean   : 93.72   Mean   : 52.61  
+    ##  3rd Qu.:160.0   3rd Qu.:660.0   3rd Qu.:108.50   3rd Qu.: 60.00  
+    ##  Max.   :285.0   Max.   :840.0   Max.   :145.00   Max.   :110.00  
+    ##  NA's   :6       NA's   :10      NA's   :39       NA's   :7       
+    ##       PH_C         PH_STUMP_L       CALC_AGE     CALC_ARRIVAL 
+    ##  Min.   : 41.0   Min.   :10.00   Min.   :1238   Min.   :  46  
+    ##  1st Qu.:480.0   1st Qu.:25.00   1st Qu.:1901   1st Qu.:1251  
+    ##  Median :540.0   Median :30.00   Median :2164   Median :1528  
+    ##  Mean   :542.2   Mean   :30.28   Mean   :2263   Mean   :1566  
+    ##  3rd Qu.:620.0   3rd Qu.:36.25   3rd Qu.:2494   3rd Qu.:1851  
+    ##  Max.   :800.0   Max.   :80.00   Max.   :4590   Max.   :2636  
+    ##  NA's   :11      NA's   :39      NA's   :163    NA's   :55    
+    ##     DH_YEAR       DH_MONTH  DH_QUARTER     W_DIFF         L_DIFF      
+    ##  2015   :176   5      :53   1: 58      Min.   : 199   Min.   : 20.00  
+    ##  2014   :118   9      :53   2:121      1st Qu.:1002   1st Qu.: 65.00  
+    ##  2013   : 32   6      :52   3: 85      Median :1195   Median : 80.00  
+    ##  2012   : 11   12     :37   4: 75      Mean   :1238   Mean   : 86.39  
+    ##  2016   :  2   3      :29              3rd Qu.:1435   3rd Qu.:100.00  
+    ##  2010   :  0   7      :25              Max.   :3113   Max.   :225.00  
+    ##  (Other):  0   (Other):90              NA's   :6      NA's   :7       
+    ##      C_DIFF            B_YEAR       B_MONTH    B_QUARTER    DIM_DEHORN    
+    ##  Min.   :-110.00   2008   : 65   3      : 31   1   : 61   Min.   :   1.0  
+    ##  1st Qu.:  40.00   2010   : 47   6      : 25   2   : 61   1st Qu.: 218.8  
+    ##  Median :  80.00   2009   : 20   5      : 19   3   : 34   Median : 409.5  
+    ##  Mean   :  78.34   2007   : 14   1      : 17   4   : 20   Mean   : 494.3  
+    ##  3rd Qu.: 120.00   2006   :  8   4      : 17   NA's:163   3rd Qu.: 640.0  
+    ##  Max.   : 409.00   (Other): 22   (Other): 67              Max.   :2070.0  
+    ##  NA's   :11        NA's   :163   NA's   :163              NA's   :213     
+    ##    INT_DEHORN     CALC_PARITY     C_YEAR       C_MONTH    C_QUARTER 
+    ##  Min.   :   0.0   0   :211    2014   : 45   2      : 25   1   : 65  
+    ##  1st Qu.: 455.0   1   : 50    2013   : 36   3      : 24   2   : 27  
+    ##  Median : 601.0   2   : 58    2012   : 17   4      : 20   3   : 20  
+    ##  Mean   : 581.4   3   : 15    2015   : 17   1      : 16   4   : 14  
+    ##  3rd Qu.: 709.0   4   :  3    2011   :  7   12     : 14   NA's:213  
+    ##  Max.   :1267.0   NA's:  2    (Other):  4   (Other): 27             
+    ##  NA's   :2                    NA's   :213   NA's   :213             
+    ##  N_DEHORNINGS    GR_DAYS          G_TOTAL              G_AH_W         
+    ##  1   :  0     Min.   :   0.0   Min.   :  0.00899   Min.   :  0.00899  
+    ##  2   :  0     1st Qu.: 455.0   1st Qu.:  2.61876   1st Qu.:  2.06535  
+    ##  3   :284     Median : 601.0   Median :  3.31424   Median :  2.53264  
+    ##  4   : 48     Mean   : 581.4   Mean   :  5.44256   Mean   :  4.09596  
+    ##  5   :  5     3rd Qu.: 709.0   3rd Qu.:  4.25376   3rd Qu.:  3.20936  
+    ##  NA's:  2     Max.   :1267.0   Max.   :298.33333   Max.   :220.33333  
+    ##               NA's   :2        NA's   :3           NA's   :3          
+    ##      G_AH_L             G_AH_C             G_PH_W       
+    ##  Min.   : 0.08682   Min.   :  0.4734   Min.   : 0.1187  
+    ##  1st Qu.: 0.19437   1st Qu.:  0.8664   1st Qu.: 0.3550  
+    ##  Median : 0.23512   Median :  1.0188   Median : 0.5006  
+    ##  Mean   : 0.32415   Mean   :  1.5434   Mean   : 1.0630  
+    ##  3rd Qu.: 0.27953   3rd Qu.:  1.2744   3rd Qu.: 0.8685  
+    ##  Max.   :18.33333   Max.   :106.6667   Max.   :48.8333  
+    ##  NA's   :9          NA's   :13         NA's   :9        
+    ##      G_PH_L             G_PH_C        
+    ##  Min.   : 0.03695   Min.   : 0.05632  
+    ##  1st Qu.: 0.06957   1st Qu.: 0.73343  
+    ##  Median : 0.08655   Median : 0.88962  
+    ##  Mean   : 0.13296   Mean   : 1.32704  
+    ##  3rd Qu.: 0.10714   3rd Qu.: 1.13846  
+    ##  Max.   :10.00000   Max.   :86.66667  
+    ##  NA's   :10         NA's   :14
+
+``` r
+describe(df.cv.final[!df.cv.final$N_DEHORNINGS  %in% c("1", "2"),])
+```
+
+    ##               vars   n    mean     sd  median trimmed    mad     min
+    ## GENDER*          1 339    1.41   0.49    1.00    1.38   0.00    1.00
+    ## AH_W_G           2 339 1604.89 584.27 1520.00 1560.58 447.75    5.00
+    ## PH_W_G           3 333  391.35 262.79  315.00  350.18 173.46   47.00
+    ## SHAVINGS_W_G     4 300  139.82  45.63  133.00  136.90  40.77   22.00
+    ## TOTAL            5 339 2113.06 814.21 1982.00 2045.52 652.34    5.00
+    ## AH_L             6 333  138.89  36.25  135.00  136.25  37.06   60.00
+    ## AH_C             7 329  619.93  84.87  630.00  625.54  59.30  340.00
+    ## AH_STUMP_L       8 300   93.72  16.56   90.00   93.16  14.83   55.00
+    ## PH_L             9 332   52.61  16.48   50.00   51.90  14.83   10.00
+    ## PH_C            10 328  542.17 108.45  540.00  547.01  88.96   41.00
+    ## PH_STUMP_L      11 300   30.28  10.51   30.00   29.98   7.41   10.00
+    ## CALC_AGE        12 176 2262.73 528.37 2163.50 2204.83 440.33 1238.00
+    ## CALC_ARRIVAL    13 284 1566.02 437.24 1527.50 1559.60 464.80   46.00
+    ## DH_YEAR*        14 339    5.37   0.79    6.00    5.49   0.00    3.00
+    ## DH_MONTH*       15 339    6.88   3.13    6.00    6.86   4.45    1.00
+    ## DH_QUARTER*     16 339    2.52   1.02    2.00    2.53   1.48    1.00
+    ## W_DIFF          17 333 1238.23 376.67 1195.00 1212.30 326.17  199.00
+    ## L_DIFF          18 332   86.39  29.21   80.00   84.26  29.65   20.00
+    ## C_DIFF          19 328   78.34  58.71   80.00   78.76  59.30 -110.00
+    ## B_YEAR*         20 176    9.31   1.72    9.00    9.51   1.48    3.00
+    ## B_MONTH*        21 176    5.44   3.15    5.00    5.23   2.97    1.00
+    ## B_QUARTER*      22 176    2.07   1.00    2.00    1.97   1.48    1.00
+    ## DIM_DEHORN      23 126  494.27 363.49  409.50  443.69 297.26    1.00
+    ## INT_DEHORN      24 337  581.37 188.27  601.00  591.79 169.02    0.00
+    ## CALC_PARITY*    25 337    1.66   0.97    1.00    1.50   0.00    1.00
+    ## C_YEAR*         26 126    7.27   1.26    7.00    7.38   1.48    3.00
+    ## C_MONTH*        27 126    4.90   3.71    3.00    4.52   1.48    1.00
+    ## C_QUARTER*      28 126    1.87   1.05    1.00    1.72   0.00    1.00
+    ## N_DEHORNINGS*   29 337    3.17   0.42    3.00    3.07   0.00    3.00
+    ## GR_DAYS         30 337  581.37 188.27  601.00  591.79 169.02    0.00
+    ## G_TOTAL         31 336    5.44  17.04    3.31    3.52   1.17    0.01
+    ## G_AH_W          32 336    4.10  12.56    2.53    2.68   0.82    0.01
+    ## G_AH_L          33 330    0.32   1.02    0.24    0.24   0.06    0.09
+    ## G_AH_C          34 326    1.54   5.94    1.02    1.07   0.26    0.47
+    ## G_PH_W          35 330    1.06   3.13    0.50    0.61   0.30    0.12
+    ## G_PH_L          36 329    0.13   0.55    0.09    0.09   0.03    0.04
+    ## G_PH_C          37 325    1.33   4.84    0.89    0.94   0.27    0.06
+    ##                   max   range  skew kurtosis    se
+    ## GENDER*          2.00    1.00  0.38    -1.86  0.03
+    ## AH_W_G        4654.00 4649.00  1.20     4.29 31.73
+    ## PH_W_G        1979.00 1932.00  2.43     9.08 14.40
+    ## SHAVINGS_W_G   322.00  300.00  0.65     0.71  2.63
+    ## TOTAL         6633.00 6628.00  1.36     4.94 44.22
+    ## AH_L           285.00  225.00  0.87     1.25  1.99
+    ## AH_C           840.00  500.00 -0.61     0.85  4.68
+    ## AH_STUMP_L     145.00   90.00  0.33    -0.42  0.96
+    ## PH_L           110.00  100.00  0.38     0.11  0.90
+    ## PH_C           800.00  759.00 -0.58     1.12  5.99
+    ## PH_STUMP_L      80.00   70.00  0.51     1.33  0.61
+    ## CALC_AGE      4590.00 3352.00  1.27     2.49 39.83
+    ## CALC_ARRIVAL  2636.00 2590.00  0.04    -0.11 25.95
+    ## DH_YEAR*         7.00    4.00 -1.08     0.75  0.04
+    ## DH_MONTH*       12.00   11.00  0.09    -1.04  0.17
+    ## DH_QUARTER*      4.00    3.00  0.08    -1.13  0.06
+    ## W_DIFF        3113.00 2914.00  1.02     2.72 20.64
+    ## L_DIFF         225.00  205.00  0.89     1.52  1.60
+    ## C_DIFF         409.00  519.00  0.49     4.24  3.24
+    ## B_YEAR*         12.00    9.00 -0.94     1.03  0.13
+    ## B_MONTH*        12.00   11.00  0.53    -0.64  0.24
+    ## B_QUARTER*       4.00    3.00  0.54    -0.81  0.08
+    ## DIM_DEHORN    2070.00 2069.00  1.58     3.18 32.38
+    ## INT_DEHORN    1267.00 1267.00 -0.50     0.72 10.26
+    ## CALC_PARITY*     5.00    4.00  1.24     0.48  0.05
+    ## C_YEAR*          9.00    6.00 -0.94     1.04  0.11
+    ## C_MONTH*        12.00   11.00  0.87    -0.75  0.33
+    ## C_QUARTER*       4.00    3.00  0.84    -0.68  0.09
+    ## N_DEHORNINGS*    5.00    2.00  2.33     4.82  0.02
+    ## GR_DAYS       1267.00 1267.00 -0.50     0.72 10.26
+    ## G_TOTAL        298.33  298.32 15.36   257.56  0.93
+    ## G_AH_W         220.33  220.32 15.41   259.03  0.69
+    ## G_AH_L          18.33   18.25 16.91   295.73  0.06
+    ## G_AH_C         106.67  106.19 17.04   297.70  0.33
+    ## G_PH_W          48.83   48.71 11.82   166.02  0.17
+    ## G_PH_L          10.00    9.96 17.26   304.25  0.03
+    ## G_PH_C          86.67   86.61 16.90   293.88  0.27
+
 Data analyis
 ============
 
@@ -739,7 +1061,7 @@ hist(df.cv[, c("DAYSDUE")],
      xlab ="")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 After data mining the aforementioned dataset, we decided to create a subset of COWS (number of dehornings larger than 1 with non-missing data for the following features:
 
@@ -789,7 +1111,7 @@ hist(log10(df.cv.cows$G_TOTAL),
      xlab = "")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
 ``` r
 op = par(mfrow=c(1, 1))
@@ -798,7 +1120,7 @@ hist(df.cv.cows$CALC_ARRIVAL,
      xlab ="")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-9-2.png)
+![](README_files/figure-markdown_github/unnamed-chunk-11-2.png)
 
 ``` r
 op = par(mfrow=c(2, 2))
@@ -816,7 +1138,7 @@ hist(log10(df.cv.cows[df.cv.cows$N_DEHORNINGS == "3",]$G_TOTAL),
      xlab ="Dehorning 3")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-9-3.png)
+![](README_files/figure-markdown_github/unnamed-chunk-11-3.png)
 
 ### Model building
 
@@ -1137,7 +1459,7 @@ plot(effect("N_DEHORNINGS:CALC_ARRIVAL",
      ylab = "Total growth (g/day)")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-16-1.png)
 
 ### Final model least square means
 
@@ -1662,7 +1984,7 @@ hist(log10(df.cv.all.f$G_AH_W),
      xlab ="")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-23-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-25-1.png)
 
 ### Model building
 
@@ -1997,7 +2319,7 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
      xlab = "Age")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-27-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-29-1.png)
 
 ### Final model least square means
 
@@ -2103,7 +2425,7 @@ hist(log10(df.cv.all.f.l$G_AH_L),
      xlab ="")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-29-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-31-1.png)
 
 ### Model building
 
@@ -2430,7 +2752,7 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
             multiline=TRUE))
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-33-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-35-1.png)
 
 ### Final model least square means
 
@@ -2533,7 +2855,7 @@ hist(log10(df.cv.all.f.c$G_AH_C),
      xlab ="")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-35-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-37-1.png)
 
 ### Model building
 
@@ -2864,7 +3186,7 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
             xlab = "Age")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-39-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-41-1.png)
 
 ### Final model least square means
 
@@ -2973,7 +3295,7 @@ describe(df.cv.mfa)
 cv.FAMD <- FAMD(df.cv.mfa)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-42-1.png)![](README_files/figure-markdown_github/unnamed-chunk-42-2.png)![](README_files/figure-markdown_github/unnamed-chunk-42-3.png)![](README_files/figure-markdown_github/unnamed-chunk-42-4.png)![](README_files/figure-markdown_github/unnamed-chunk-42-5.png)
+![](README_files/figure-markdown_github/unnamed-chunk-44-1.png)![](README_files/figure-markdown_github/unnamed-chunk-44-2.png)![](README_files/figure-markdown_github/unnamed-chunk-44-3.png)![](README_files/figure-markdown_github/unnamed-chunk-44-4.png)![](README_files/figure-markdown_github/unnamed-chunk-44-5.png)
 
 Show the eigenvalues and variance and vizualize
 
@@ -2993,7 +3315,7 @@ head(eig.val)
 fviz_screeplot(cv.FAMD)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-43-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-45-1.png)
 
 Plot the variables and overall contribution
 
@@ -3009,7 +3331,7 @@ DIM1 <- c("Anterior horn growth",
 fviz_famd_var(cv.FAMD, repel = TRUE)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-44-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-46-1.png)
 
 ``` r
 # Contribution to the first dimension
@@ -3018,7 +3340,7 @@ fviz_contrib(cv.FAMD, "var",
              x.lab = DIM1)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-44-2.png)
+![](README_files/figure-markdown_github/unnamed-chunk-46-2.png)
 
 ``` r
 # Contribution to the second dimension
@@ -3026,7 +3348,7 @@ fviz_contrib(cv.FAMD, "var",
              axes = 2)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-44-3.png)
+![](README_files/figure-markdown_github/unnamed-chunk-46-3.png)
 
 Contribution of the quantitative variables on dimension 1 and 2
 
@@ -3047,7 +3369,7 @@ fviz_famd_var(cv.FAMD, "quanti.var", repel = TRUE,
               col.var = "black")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-45-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-47-1.png)
 
 ``` r
 fviz_famd_var(cv.FAMD, "quanti.var", col.var = "contrib", 
@@ -3055,7 +3377,7 @@ fviz_famd_var(cv.FAMD, "quanti.var", col.var = "contrib",
              repel = TRUE)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-45-2.png)
+![](README_files/figure-markdown_github/unnamed-chunk-47-2.png)
 
 Contribution of the qualitative variables
 
@@ -3065,7 +3387,7 @@ fviz_famd_var(cv.FAMD, "quali.var", col.var = "contrib",
              )
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-46-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-48-1.png)
 
 Plot the individual observations
 
@@ -3080,4 +3402,4 @@ fviz_ellipses(cv.FAMD, c("N_DEHORNINGS", "GENDER"),
               )
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-47-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-49-1.png)
