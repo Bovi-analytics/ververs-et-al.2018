@@ -11,6 +11,11 @@ Currently the following R packages were loaded
 
 ```{r, echo=FALSE}
 #effects plot
+if (!require("knitr")) {
+  install.packages("knitr", dependencies = TRUE)
+  library(knitr)
+}
+#effects plot
 if (!require("effects")) {
   install.packages("effects", dependencies = TRUE)
   library(effects)

@@ -8,6 +8,8 @@ Statistical analysis preface
 
 Currently the following R packages were loaded
 
+    ## Loading required package: knitr
+
     ## Loading required package: effects
 
     ## Loading required package: carData
