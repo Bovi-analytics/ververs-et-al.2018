@@ -1,0 +1,781 @@
+---
+title: "Ververs et al. (2018) - Reviewers request"
+output: 
+  github_document:
+    toc: true
+    toc_depth: 3
+editor_options: 
+  chunk_output_type: console
+---
+
+This is a notebook for the dehorning data of Ververs et al. (2018). This extra notebook shows the reviewers request to test random/repeated effects. 
+
+## Statistical analysis preface
+
+Currently the following R packages were loaded
+
+```{r, echo=FALSE}
+# lme4
+if (!require("lme4")) {
+  install.packages("lme4", dependencies = TRUE)
+  library(lme4)
+}
+# effects
+if (!require("effects")) {
+  install.packages("effects", dependencies = TRUE)
+  library(effects)
+}
+# car
+if (!require("car")) {
+  install.packages("car", dependencies = TRUE)
+  library(car)
+}
+# sjPlot
+if (!require("sjPlot")) {
+  install.packages("sjPlot", dependencies = TRUE)
+  library(sjPlot)
+}
+# lsmeans() function
+if (!require("lsmeans")) {
+  install.packages("lsmeans", dependencies = TRUE)
+  library(lsmeans)
+}
+# EnvStats() function
+if (!require("EnvStats")) {
+  install.packages("EnvStats", dependencies = TRUE)
+  library(EnvStats)
+}
+```
+
+## Main data extraction, transformation and loading
+
+The data was read from the excel file containing all dehornings, and some 
+
+```{r, echo=FALSE}
+#Set correct path
+path_csv <- "./dehorndata.csv"
+#Read the data
+df.cv <- read.csv2(path_csv)
+#Create factors instead of characters
+character_vars <- lapply(df.cv, class) == "character"
+df.cv[, character_vars] <- lapply(df.cv[, character_vars], as.factor)
+#Create extra date variables
+#For birth date
+df.cv$B_YEAR <- as.factor(df.cv$B_YEAR)
+df.cv$B_MONTH <- as.factor(df.cv$B_MONTH)
+df.cv$B_QUARTER <- as.factor(df.cv$B_QUARTER)
+#And calving date
+df.cv$C_YEAR <- as.factor(df.cv$C_YEAR)
+df.cv$C_MONTH <- as.factor(df.cv$C_MONTH)
+df.cv$C_QUARTER <- as.factor(df.cv$C_QUARTER)
+#And dehorn date
+df.cv$DH_YEAR <- as.factor(df.cv$DH_YEAR)
+df.cv$DH_MONTH <- as.factor(df.cv$DH_MONTH)
+df.cv$DH_QUARTER <- as.factor(df.cv$DH_QUARTER)
+
+#Create numerical factor for number of dehornings
+df.cv$N_DEHORNINGS <- as.factor(df.cv$N_DEHORNINGS)
+#And a calculated parity (to avoid mistakes in parity number written down)
+df.cv$CALC_PARITY <- as.factor(df.cv$CALC_PARITY)
+
+#Our final dataset is called df.cv.final and contains specific columns
+df.cv.final <- df.cv[, c("ANIMAL",
+                         "GENDER", 
+                         "AH_W_G",
+                         "PH_W_G",
+                         "SHAVINGS_W_G",
+                         "TOTAL", 
+                         "AH_L",
+                         "AH_C",
+                         "AH_STUMP_L",
+                         "PH_L",
+                         "PH_C",
+                         "PH_STUMP_L",
+                         "CALC_AGE",
+                         "CALC_ARRIVAL",
+                         "DH_YEAR",
+                         "DH_MONTH",
+                         "DH_QUARTER",
+                         "W_DIFF",
+                         "L_DIFF",
+                         "C_DIFF",
+                         "B_YEAR",
+                         "B_MONTH",
+                         "B_QUARTER",
+                         "DIM_DEHORN",
+                         "INT_DEHORN",
+                         "CALC_PARITY",
+                         "C_YEAR",
+                         "C_MONTH",
+                         "C_QUARTER",
+                         "N_DEHORNINGS",
+                         "GR_DAYS",
+                         "G_TOTAL",
+                         "G_AH_W",
+                         "G_AH_L",
+                         "G_AH_C",
+                         "G_PH_W",
+                         "G_PH_L",
+                         "G_PH_C")]
+```
+
+# Hypothesis 1 - Factors influencing the total growth of the horn in reproducing females
+
+## Data preparation
+
+```{r}
+df.cv.cows <- na.omit(df.cv[!df.cv$N_DEHORNINGS == "1", c("ANIMAL","CALC_ARRIVAL", "DH_QUARTER", "DIM_DEHORN", "CALC_PARITY", "C_QUARTER", "N_DEHORNINGS", "G_TOTAL")])
+
+#Set all number of dehornings larger then 3 equal to 3 
+df.cv.cows[df.cv.cows$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
+df.cv.cows[df.cv.cows$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
+#Not enough animals in the 4th parity
+df.cv.cows[df.cv.cows$CALC_PARITY == "4",]$CALC_PARITY <- "3"
+df.cv.cows$ANIMAL <- as.factor(df.cv.cows$ANIMAL)
+
+summary(df.cv.cows)
+xtabs(~DH_QUARTER+N_DEHORNINGS, df.cv.cows)
+xtabs(~C_QUARTER+N_DEHORNINGS, df.cv.cows)
+```
+
+## Data transformations of continuous variables
+
+```{r}
+df.cv.cows$CALC_ARRIVAL_BC <- boxcoxTransform(df.cv.cows$CALC_ARRIVAL, lambda = 1)
+df.cv.cows$CALC_ARRIVAL_STD <- scale(df.cv.cows$CALC_ARRIVAL)
+hist(df.cv.cows$CALC_ARRIVAL)
+hist(df.cv.cows$CALC_ARRIVAL_STD)
+hist(df.cv.cows$CALC_ARRIVAL_BC)
+
+df.cv.cows$DIM_DEHORN_BC <- boxcoxTransform(df.cv.cows$DIM_DEHORN, lambda = 0.5)
+df.cv.cows$DIM_DEHORN_BC_STD <- scale(df.cv.cows$DIM_DEHORN_BC)
+hist(df.cv.cows$DIM_DEHORN)
+hist(df.cv.cows$DIM_DEHORN_BC)
+hist(df.cv.cows$DIM_DEHORN_BC_STD)
+```
+
+## Model building
+
+### Generalised linear model
+
+For more info (here)[https://en.wikipedia.org/wiki/Generalized_linear_model]
+
+```{r}
+baselineGLM <- glm(G_TOTAL ~ 1, 
+                         df.cv.cows, 
+                         family = gaussian(link="log"))
+```
+
+### Generalized Linear Mixed-Effects Models
+
+For more info [here](https://en.wikipedia.org/wiki/Generalized_linear_mixed_model)
+
+We try to take into account the effect of the repeated measures (N_DEHORNINGS) within each animal (ANIMAL). We first want to understand 
+
+```{r}
+baselineGLMM <- glmer(G_TOTAL ~ 1 + (1 | ANIMAL), 
+                  df.cv.cows, 
+                  family = gaussian(link="log"),
+                  control=glmerControl(optimizer="bobyqa")
+                  )
+```
+
+### GLM vs GLMM model comparison
+
+```{r}
+anova(baselineGLMM, baselineGLM, test="Chisq")
+```
+
+It seems that the random effect GLMM is increasing the model fit.  Hence we will proceed.
+
+### Univariate models
+
+
+```{r, echo=FALSE}
+summary(glmer1 <- glmer(G_TOTAL ~ N_DEHORNINGS + (1| ANIMAL), 
+                df.cv.cows, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa")
+                  ))
+summary(glmer2 <- glmer(G_TOTAL ~ CALC_ARRIVAL_STD + (1| ANIMAL), 
+                df.cv.cows, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa")
+                ))
+summary(glmer3 <- glmer(G_TOTAL ~ CALC_PARITY + (1| ANIMAL), 
+                df.cv.cows, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa")
+                  ))
+summary(glmer4 <- glmer(G_TOTAL ~ DIM_DEHORN_BC_STD + (1| ANIMAL), 
+                df.cv.cows, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa")
+                  ))
+summary(glmer5 <- glmer(G_TOTAL ~ DH_QUARTER + (1| ANIMAL), 
+                df.cv.cows, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa")
+                ))
+summary(glmer6 <- glmer(G_TOTAL ~ C_QUARTER + (1| ANIMAL), 
+                df.cv.cows, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa")
+                ))
+
+```
+
+### Univariate model comparison
+
+```{r}
+## Comparison of basemodel and single variate models
+anova(baselineGLMM, glmer1 ,glmer2, glmer3, glmer4, glmer5, glmer6,  test = "Chisq")
+```
+
+### Multivariate model building
+
+```{r}
+summary(glmer10 <- glmer(G_TOTAL ~ DH_QUARTER*DIM_DEHORN_BC_STD    
+                         +  (1 | ANIMAL), 
+                df.cv.cows, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa")))
+Anova(glmer10)
+```
+
+```{r}
+summary(glmer11 <- glmer(G_TOTAL ~ N_DEHORNINGS + DH_QUARTER*CALC_ARRIVAL_STD 
+                         +  (1|ANIMAL), 
+                df.cv.cows, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa")))
+Anova(glmer11)
+```
+
+## Final model selection 
+
+```{r}
+anova(glmer10, glmer11, test = "Chisq")
+```
+
+### Interaction modelling
+
+To understand the effect of the interaction, an effects plot was created
+
+```{r}
+plot(effect("DH_QUARTER:DIM_DEHORN_BC_STD", 
+            glmer10, 
+            #xlevels=list(CALC_ARRIVAL=900:2000), 
+            multiline=TRUE),
+     main = "Interaction between dehorn season and days since last dehorn",
+     xlab = "Days since arrival",
+     ylab = "Total growth (g/day)")
+```
+
+### Least square means
+
+The [least square means](https://en.wikipedia.org/wiki/Least_squares) are constructed for the final variables.
+
+This is the overal P-value per variables
+
+```{r, echo=FALSE}
+Anova(glmer10)
+```
+
+Least square means, Tukey adjusted
+
+```{r, echo=FALSE}
+
+lsmeans(glmer10, pairwise~DH_QUARTER, type = "response", adjust = "tukey" )
+
+if (!require("multcompView")) {
+  install.packages("multcompView", dependencies = TRUE)
+  library(multcompView)
+}
+## http://rcompanion.org/handbook/G_06.html
+cld(lsmeans(glmer10, pairwise~DH_QUARTER),
+          alpha=0.05,
+          Letters=letters,
+          adjust="tukey")
+```
+
+# Hypothesis 2 - Factors influencing the total growth of the horn in males and females
+
+## Data preparation
+
+```{r}
+#Make sure to drop the extemely low growth which are caused by dirty data
+df.cv.all <- na.omit(df.cv[df.cv$G_TOTAL < 100,
+                           (names(df.cv) %in% c("ANIMAL",
+                                                "CALC_AGE", 
+                                                "DH_QUARTER", 
+                                                "GENDER", 
+                                                "G_TOTAL",
+                                                "N_DEHORNINGS",
+                                                "B_QUARTER"
+                                                ))])
+df.cv.all$ANIMAL <- as.factor(df.cv.all$ANIMAL)
+df.cv.all[df.cv.all$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
+df.cv.all[df.cv.all$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
+
+summary(df.cv.all)
+
+xtabs(~DH_QUARTER+N_DEHORNINGS, df.cv.all)
+xtabs(~B_QUARTER+N_DEHORNINGS, df.cv.all)
+```
+
+## Data transformations of continuous variables
+
+```{r}
+df.cv.all$CALC_AGE_BC <- boxcoxTransform(df.cv.all$CALC_AGE, lambda = .25)
+df.cv.all$CALC_AGE_BC_STD <- scale(df.cv.all$CALC_AGE_BC)
+hist(df.cv.all$CALC_AGE)
+hist(df.cv.all$CALC_AGE_BC_STD)
+
+```
+
+
+## Model building
+
+### Generalaised linear model
+
+For more info [here]([https://en.wikipedia.org/wiki/Generalized_linear_model)
+
+```{r}
+baselineGLM <- glm(G_TOTAL ~ 1, 
+                         df.cv.all, 
+                         family = gaussian(link="log"))
+```
+
+### Generalized Linear Mixed-Effects Models
+
+For more info [here](https://en.wikipedia.org/wiki/Generalized_linear_mixed_model)
+
+We try to take into account the effect of the repeated measures (N_DEHORNINGS) within each animal (ANIMAL). We first want to understand 
+
+```{r}
+baselineGLMM <- glmer(G_TOTAL ~ 1 + (1 | ANIMAL), 
+                  df.cv.all, 
+                  family = gaussian(link="log"),
+                  control=glmerControl(optimizer="bobyqa")
+                  )
+```
+
+
+### Model comparison
+
+```{r}
+anova(baselineGLMM, baselineGLM, test="Chisq")
+```
+The GLMM performs better
+
+
+### Univariate model building
+
+```{r, echo=FALSE}
+glmer1 <- glmer(G_TOTAL~ N_DEHORNINGS + (1 | ANIMAL), 
+                df.cv.all, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa"))
+glmer2 <- glmer(G_TOTAL~ CALC_AGE_BC_STD + (1 | ANIMAL), 
+                df.cv.all, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa"))
+glmer3 <- glmer(G_TOTAL~ DH_QUARTER + (1 | ANIMAL), 
+                df.cv.all, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa"))
+glmer4 <- glmer(G_TOTAL~ B_QUARTER + (1 | ANIMAL), 
+                df.cv.all, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa"))
+glmer5 <- glmer(G_TOTAL~ GENDER + (1 | ANIMAL), 
+                df.cv.all, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa"))
+```
+
+### Model comparison
+
+```{r}
+## Comparison of basemodel and single variate models
+anova(baselineGLMM, glmer1 ,glmer2, glmer3, glmer4, glmer5, test = "Chisq")
+```
+
+### Model building
+
+```{r}
+glmer10 <- glmer(G_TOTAL ~ CALC_AGE_BC_STD + N_DEHORNINGS + B_QUARTER    
+                         +  (1| ANIMAL), 
+                df.cv.all, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa"))
+summary(glmer10)
+Anova(glmer10)
+```
+
+```{r}
+glmer11 <- glmer(G_TOTAL ~ N_DEHORNINGS*CALC_AGE_BC_STD + B_QUARTER    
+                         +  (1| ANIMAL), 
+                df.cv.all, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa"))
+summary(glmer11)
+Anova(glmer11)
+
+```
+
+## Final model 
+
+Test interaction fit
+
+```{r}
+anova(glmer10, glmer11, test="Chisq")
+```
+
+The model with the interaction fits best, lowest AIC
+
+### Interaction modelling
+
+To understand the effect of the interaction, an effects plot was created
+
+```{r}
+plot(effect("N_DEHORNINGS:CALC_AGE_BC_STD", 
+            glmer11, 
+            #xlevels=list(CALC_ARRIVAL=900:2000), 
+            multiline=TRUE),
+     main = "Interaction between number of dehornings and days at farm",
+     xlab = "Days since arrival",
+     ylab = "Total growth (g/day)")
+```
+
+Next piece is used to show it on non transformed scale
+
+```{r}
+glmer11b <- glmer(G_TOTAL ~ N_DEHORNINGS*CALC_AGE + B_QUARTER    
+                         +  (1| ANIMAL), 
+                df.cv.all, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa"))
+plot(effect("N_DEHORNINGS:CALC_AGE", 
+            glmer11b, 
+            #xlevels=list(CALC_ARRIVAL=900:2000), 
+            multiline=TRUE),
+     main = "Interaction between number of dehornings and days at farm",
+     xlab = "Days since arrival",
+     ylab = "Total growth (g/day)")
+```
+
+### Least square means
+
+The [least square means](https://en.wikipedia.org/wiki/Least_squares) are constructed for the final variables.
+
+This is the overal P-value per variables
+
+```{r, echo=FALSE}
+Anova(glmer11)
+```
+
+Least square means, Tukey adjusted
+
+```{r, echo=FALSE}
+
+lsmeans(glmer11, pairwise~N_DEHORNINGS, type = "response", adjust = "tukey" )
+lsmeans(glmer11, pairwise~B_QUARTER, type = "response", adjust = "tukey")
+# If you need the subscripts which differ
+cld(lsmeans(glmer11, pairwise~N_DEHORNINGS),
+          alpha=0.05,
+          Letters=letters,
+          adjust="tukey")
+cld(lsmeans(glmer11, pairwise~B_QUARTER),
+          alpha=0.05,
+          Letters=letters,
+          adjust="tukey")
+```
+
+# Hypothesis 3: Factors influencing the growth of the anterior horn weight in males and females
+
+## Data preparation
+
+```{r, echo=TRUE}
+df.cv.all.f <- na.omit(df.cv[df.cv$G_AH_W < 100,
+                             (names(df.cv) %in% c("ANIMAL",
+                                                  "CALC_AGE",
+                                                  "DH_QUARTER", 
+                                                  "GENDER", 
+                                                  "G_AH_W",
+                                                  "N_DEHORNINGS",
+                                                  "B_QUARTER"))])
+summary(df.cv.all.f)
+df.cv.all.f[df.cv.all.f$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
+df.cv.all.f[df.cv.all.f$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
+#create histogram of the front horn weiht
+op = par(mfrow=c(1, 2))
+hist((df.cv.all.f$G_AH_W), 
+     main = "Anterior horn weight growth (g/day)",
+     xlab ="")
+hist(log10(df.cv.all.f$G_AH_W),
+      main = "Log10",
+     xlab ="")
+```
+
+## Data transformations of continuous variables
+
+```{r}
+df.cv.all.f$CALC_AGE_BC <- boxcoxTransform(df.cv.all.f$CALC_AGE, lambda = .25)
+df.cv.all.f$CALC_AGE_BC_STD <- scale(df.cv.all.f$CALC_AGE_BC)
+hist(df.cv.all.f$CALC_AGE)
+hist(df.cv.all.f$CALC_AGE_BC_STD)
+```
+
+##  Model building
+
+### Generalaised linear model
+
+For more info [here]([https://en.wikipedia.org/wiki/Generalized_linear_model)
+
+```{r}
+baselineGLM <- glm(G_AH_W ~ 1, 
+                         df.cv.all.f, 
+                         family = gaussian(link="log"))
+```
+
+### Generalized Linear Mixed-Effects Models
+
+For more info [here](https://en.wikipedia.org/wiki/Generalized_linear_mixed_model)
+
+We try to take into account the effect of the repeated measures (N_DEHORNINGS) within each animal (ANIMAL). We first want to understand 
+
+```{r}
+baselineGLMM <- glmer(G_AH_W ~ 1 + (1 | ANIMAL), 
+                  df.cv.all.f, 
+                  family = gaussian(link="log"),
+                  control=glmerControl(optimizer="bobyqa")
+                  )
+```
+
+
+### Model comparison
+
+```{r}
+anova(baselineGLMM, baselineGLM, test="Chisq")
+```
+The GLMM performs better
+
+### Univariate model building
+
+### Model building
+
+```{r, echo=FALSE}
+summary(glmer1 <- glmer(G_AH_W~ N_DEHORNINGS + (1 | ANIMAL), 
+                    df.cv.all.f, 
+                    family = gaussian(link="log")))
+summary(glmer2 <- glmer(G_AH_W~ CALC_AGE_BC_STD + (1 | ANIMAL), 
+                    df.cv.all.f, 
+                    family = gaussian(link="log")))
+summary(glmer3 <- glmer(G_AH_W~ DH_QUARTER + (1 | ANIMAL), 
+                    df.cv.all.f, 
+                    family = gaussian(link="log")))
+summary(glmer4 <- glmer(G_AH_W~ B_QUARTER + (1 | ANIMAL), 
+                    df.cv.all.f, 
+                    family = gaussian(link="log")))
+summary(glmer5 <- glmer(G_AH_W~ GENDER + (1 | ANIMAL), 
+                    df.cv.all.f, 
+                    family = gaussian(link="log")))
+```
+
+### Model selection
+
+```{r, echo=FALSE}
+anova(baselineGLMM, glmer1, glmer2, glmer3, glmer4, glmer5, test = "Chisq")
+```
+
+### Model selection
+
+```{r, echo=FALSE}
+summary(glm7 <- glm(G_AH_W~ N_DEHORNINGS + 
+                      CALC_AGE + 
+                      GENDER, df.cv.all.f, family = gaussian(link="log")))
+anova(glm7, test = "Chisq")
+```
+
+### Interaction
+
+```{r}
+summary(glm8 <- glm(G_AH_W~ N_DEHORNINGS*CALC_AGE +
+                      GENDER*CALC_AGE, df.cv.all.f, family = gaussian(link="log")))
+anova(glm8, test = "Chisq")
+plot(effect("N_DEHORNINGS:CALC_AGE", 
+            glm8, 
+            #xlevels=list(CALC_ARRIVAL=900:2000), 
+            multiline=TRUE),
+     main= "Interaction between number of dehornings and age",
+     ylab = "Anterior horn Weight growth (g/day)",
+     xlab = "Age")
+```
+
+### Final model least square means
+
+```{r, echo=FALSE}
+lsmeans(glm8, pairwise~N_DEHORNINGS, type = "response", adjust="tukey")
+lsmeans(glm8, ~CALC_AGE, type = "response")
+lsmeans(glm8, ~N_DEHORNINGS*CALC_AGE, type = "response")
+lsmeans(glm8, pairwise~ GENDER, type = "response")
+```
+
+## Hypothesis 4: Factors influencing the growth of the anterior horn length in males and females
+
+### Data preparation
+
+```{r, echo=TRUE}
+df.cv.all.f.l <- na.omit(df.cv[df.cv$G_AH_L < 10,
+                               (names(df.cv) %in% c("CALC_AGE", 
+                                                    "DH_QUARTER", 
+                                                    "GENDER", 
+                                                    "G_AH_L",
+                                                    "N_DEHORNINGS",
+                                                    "B_QUARTER"
+                                                    ))])
+df.cv.all.f.l[df.cv.all.f.l$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
+df.cv.all.f.l[df.cv.all.f.l$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
+summary(df.cv.all.f.l)
+op = par(mfrow=c(1, 2))
+hist(df.cv.all.f.l$G_AH_L,
+     main = "Anterior horn length growth (mm/day)",
+     xlab ="")
+hist(log10(df.cv.all.f.l$G_AH_L),
+     main = "LOG10",
+     xlab ="")
+```
+
+### Model building
+
+```{r, echo=FALSE}
+summary(baseline <- glm(G_AH_L~ 1, df.cv.all.f.l, family = gaussian(link="log")))
+summary(glm2 <- glm(G_AH_L~ N_DEHORNINGS, df.cv.all.f.l, family = gaussian(link="log")))
+summary(glm3 <- glm(G_AH_L~ CALC_AGE, df.cv.all.f.l, family = gaussian(link="log")))
+summary(glm4 <- glm(G_AH_L~ DH_QUARTER, df.cv.all.f.l, family = gaussian(link="log")))
+summary(glm5 <- glm(G_AH_L~ B_QUARTER, df.cv.all.f.l, family = gaussian(link="log")))
+summary(glm6 <- glm(G_AH_L~ GENDER, df.cv.all.f.l, family = gaussian(link="log")))
+```
+
+### Model selection
+
+```{r, echo=FALSE}
+anova(baseline, glm2, glm3, glm4, glm5, glm6, test = "Chisq")
+anova(baseline, glm2, test = "Chisq")
+anova(baseline, glm3, test = "Chisq")
+anova(baseline, glm4, test = "Chisq")
+anova(baseline, glm5, test = "Chisq")
+anova(baseline, glm6, test = "Chisq")
+```
+
+### Final model selection
+
+```{r, echo=FALSE}
+summary(glm7 <- glm(G_AH_L~ N_DEHORNINGS + 
+                            CALC_AGE + 
+                            GENDER, df.cv.all.f.l, family = gaussian(link="log")))
+anova(glm7, test = "Chisq")
+```
+
+### Interaction
+
+```{r}
+summary(glm8 <- glm(G_AH_L~ N_DEHORNINGS*CALC_AGE + 
+                      GENDER, df.cv.all.f.l, family = gaussian(link="log")))
+anova(glm8, test = "Chisq")
+plot(effect("N_DEHORNINGS:CALC_AGE", 
+            glm8, 
+            multiline=TRUE))
+```
+
+### Final model least square means
+
+```{r, echo=FALSE}
+lsmeans(glm8, pairwise~N_DEHORNINGS, type = "response", adjust="tukey")
+lsmeans(glm8, ~CALC_AGE, type = "response")
+lsmeans(glm8, ~N_DEHORNINGS*CALC_AGE, type = "response")
+lsmeans(glm8, pairwise~ GENDER, type = "response")
+```
+
+## Hypothesis 5: Factors influencing the growth of the anterior horn circumference (mm/day) in males and females 
+
+### Data preparation
+
+```{r, echo=TRUE}
+df.cv.all.f.c <- na.omit(df.cv[df.cv$G_AH_C < 100,(names(df.cv) %in% c("CALC_AGE", 
+                                                                     "DH_QUARTER", 
+                                                                     "GENDER", 
+                                                                     "G_AH_C",
+                                                                     "N_DEHORNINGS",
+                                                                     "B_QUARTER"
+                                                                     ))])
+df.cv.all.f.c[df.cv.all.f.c$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
+df.cv.all.f.c[df.cv.all.f.c$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
+summary(df.cv.all.f.c)
+op = par(mfrow=c(1, 2))
+hist(df.cv.all.f.c$G_AH_C,
+     main = "Anterior horn circumference growth(mm/day)",
+     xlab ="")
+hist(log10(df.cv.all.f.c$G_AH_C),
+     main = "Log10",
+     xlab ="")
+```
+
+### Model building
+
+```{r, echo=FALSE}
+summary(baseline <- glm(G_AH_C~ 1, df.cv.all.f.c, family = gaussian(link="log")))
+summary(glm2 <- glm(G_AH_C~ N_DEHORNINGS, df.cv.all.f.c, family = gaussian(link="log")))
+summary(glm3 <- glm(G_AH_C~ CALC_AGE, df.cv.all.f.c, family = gaussian(link="log")))
+summary(glm4 <- glm(G_AH_C~ DH_QUARTER, df.cv.all.f.c, family = gaussian(link="log")))
+summary(glm5 <- glm(G_AH_C~ B_QUARTER, df.cv.all.f.c, family = gaussian(link="log")))
+summary(glm6 <- glm(G_AH_C~ GENDER, df.cv.all.f.c, family = gaussian(link="log")))
+```
+
+### Model selection
+
+```{r, echo=FALSE}
+anova(baseline, glm2, glm3, glm4, glm5, glm6, test = "Chisq")
+anova(baseline, glm2, test = "Chisq")
+anova(baseline, glm3, test = "Chisq")
+anova(baseline, glm4, test = "Chisq")
+anova(baseline, glm5, test = "Chisq")
+anova(baseline, glm6, test = "Chisq")
+```
+
+### Final model selection
+
+```{r, echo=FALSE}
+summary(glm7 <- glm(G_AH_C~ N_DEHORNINGS + 
+                      CALC_AGE + 
+                      GENDER, df.cv.all.f.c, family = gaussian(link="log")))
+anova(glm7, test = "Chisq")
+```
+
+### Interaction
+
+```{r}
+summary(glm8 <- glm(G_AH_C~ N_DEHORNINGS*CALC_AGE + GENDER
+                      , df.cv.all.f.c, family = gaussian(link="log")))
+anova(glm8, test = "Chisq")
+plot(effect("N_DEHORNINGS:CALC_AGE", 
+            glm8, 
+            #xlevels=list(CALC_ARRIVAL=900:2000), 
+            multiline=TRUE),
+            main= "Interaction between number of dehornings and age",
+            ylab = "Circular growth of the front horn",
+            xlab = "Age")
+```
+
+### Final model least square means
+
+```{r, echo=FALSE}
+lsmeans(glm8, pairwise~N_DEHORNINGS, type = "response", adjust="tukey")
+lsmeans(glm8, ~CALC_AGE, type = "response")
+lsmeans(glm8, ~N_DEHORNINGS*CALC_AGE, type = "response")
+lsmeans(glm8, pairwise~ GENDER, type = "response")
+```
+
+

@@ -53,6 +53,7 @@ df.cv <- read.csv2(path_csv)
 #Create factors instead of characters
 character_vars <- lapply(df.cv, class) == "character"
 df.cv[, character_vars] <- lapply(df.cv[, character_vars], as.factor)
+df.cv$ANIMAL <- as.factor(df.cv$ANIMAL)
 #Create extra date variables
 #For birth date
 df.cv$B_YEAR <- as.factor(df.cv$B_YEAR)
@@ -115,7 +116,6 @@ df.cv.final <- df.cv[, c("GENDER",
 This has a first larger dataset is loaded in memory to start from.
 
 # Descriptive statistics
-
 
 A summary is requested holding [descriptive statistics]([https://en.wikipedia.org/wiki/Descriptive_statistics).
 
