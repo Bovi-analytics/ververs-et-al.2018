@@ -91,6 +91,8 @@ Currently the following R packages were loaded
 
     ## Loading required package: sjPlot
 
+    ## #refugeeswelcome
+
     ## Loading required package: lsmeans
 
     ## The 'lsmeans' package is being deprecated.
