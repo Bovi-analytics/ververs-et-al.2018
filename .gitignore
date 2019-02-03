@@ -2,3 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+Review_files/
+README_files/
+*.pdf
+*.png
+*.ini
