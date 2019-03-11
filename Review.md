@@ -91,14 +91,16 @@ Currently the following R packages were loaded
 
     ## Loading required package: sjPlot
 
-    ## #refugeeswelcome
+    ## Learn more about sjPlot with 'browseVignettes("sjPlot")'.
 
     ## Loading required package: lsmeans
 
-    ## The 'lsmeans' package is being deprecated.
-    ## Users are encouraged to switch to 'emmeans'.
-    ## See help('transition') for more information, including how
-    ## to convert 'lsmeans' objects and scripts to work with 'emmeans'.
+    ## Loading required package: emmeans
+
+    ## The 'lsmeans' package is now basically a front end for 'emmeans'.
+    ## Users are encouraged to switch the rest of the way.
+    ## See help('transition') for more information, including how to
+    ## convert old 'lsmeans' objects and scripts to work with 'emmeans'.
 
     ## Loading required package: EnvStats
 
@@ -138,27 +140,33 @@ df.cv.cows <- na.omit(df.cv[!df.cv$N_DEHORNINGS == "1", c("ANIMAL","CALC_ARRIVAL
 #Set all number of dehornings larger then 3 equal to 3 
 df.cv.cows[df.cv.cows$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
 df.cv.cows[df.cv.cows$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
+df.cv.cows$N_DEHORNINGS <-  droplevels(df.cv.cows$N_DEHORNINGS)
+
 #Not enough animals in the 4th parity
 df.cv.cows[df.cv.cows$CALC_PARITY == "4",]$CALC_PARITY <- "3"
+df.cv.cows$CALC_PARITY <- droplevels(df.cv.cows$CALC_PARITY)
+
+
+
 df.cv.cows$ANIMAL <- as.factor(df.cv.cows$ANIMAL)
 
 summary(df.cv.cows)
 ```
 
     ##      ANIMAL     CALC_ARRIVAL  DH_QUARTER   DIM_DEHORN     CALC_PARITY
-    ##  5      :  2   Min.   : 252   1: 56      Min.   :   1.0   0:  0      
-    ##  32     :  2   1st Qu.:1004   2:129      1st Qu.: 267.0   1:180      
-    ##  249    :  2   Median :1409   3: 94      Median : 462.0   2:139      
-    ##  862    :  2   Mean   :1398   4: 88      Mean   : 531.4   3: 48      
-    ##  894    :  2   3rd Qu.:1761              3rd Qu.: 717.0   4:  0      
+    ##  5      :  2   Min.   : 252   1: 56      Min.   :   1.0   1:180      
+    ##  32     :  2   1st Qu.:1004   2:129      1st Qu.: 267.0   2:139      
+    ##  249    :  2   Median :1409   3: 94      Median : 462.0   3: 48      
+    ##  862    :  2   Mean   :1398   4: 88      Mean   : 531.4              
+    ##  894    :  2   3rd Qu.:1761              3rd Qu.: 717.0              
     ##  908    :  2   Max.   :2636              Max.   :2070.0              
     ##  (Other):355                                                         
     ##  C_QUARTER N_DEHORNINGS    G_TOTAL        
-    ##  1:169     1:  0        Min.   : 0.00899  
-    ##  2: 83     2:243        1st Qu.: 2.16535  
-    ##  3: 71     3:124        Median : 2.62069  
-    ##  4: 44     4:  0        Mean   : 3.78089  
-    ##            5:  0        3rd Qu.: 3.32012  
+    ##  1:169     2:243        Min.   : 0.00899  
+    ##  2: 83     3:124        1st Qu.: 2.16535  
+    ##  3: 71                  Median : 2.62069  
+    ##  4: 44                  Mean   : 3.78089  
+    ##                         3rd Qu.: 3.32012  
     ##                         Max.   :60.06250  
     ## 
 
@@ -167,42 +175,42 @@ xtabs(~DH_QUARTER+N_DEHORNINGS, df.cv.cows)
 ```
 
     ##           N_DEHORNINGS
-    ## DH_QUARTER  1  2  3  4  5
-    ##          1  0 30 26  0  0
-    ##          2  0 71 58  0  0
-    ##          3  0 72 22  0  0
-    ##          4  0 70 18  0  0
+    ## DH_QUARTER  2  3
+    ##          1 30 26
+    ##          2 71 58
+    ##          3 72 22
+    ##          4 70 18
 
 ``` r
 xtabs(~C_QUARTER+N_DEHORNINGS, df.cv.cows)
 ```
 
     ##          N_DEHORNINGS
-    ## C_QUARTER   1   2   3   4   5
-    ##         1   0 106  63   0   0
-    ##         2   0  56  27   0   0
-    ##         3   0  51  20   0   0
-    ##         4   0  30  14   0   0
+    ## C_QUARTER   2   3
+    ##         1 106  63
+    ##         2  56  27
+    ##         3  51  20
+    ##         4  30  14
 
 Data transformations of continuous variables
 --------------------------------------------
 
 ``` r
 df.cv.cows$CALC_ARRIVAL_BC <- boxcoxTransform(df.cv.cows$CALC_ARRIVAL, lambda = 1)
-df.cv.cows$CALC_ARRIVAL_STD <- scale(df.cv.cows$CALC_ARRIVAL)
+df.cv.cows$CALC_ARRIVAL_BC_STD <- scale(df.cv.cows$CALC_ARRIVAL_BC)
 hist(df.cv.cows$CALC_ARRIVAL)
 ```
 
 ![](Review_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
 ``` r
-hist(df.cv.cows$CALC_ARRIVAL_STD)
+hist(df.cv.cows$CALC_ARRIVAL_BC)
 ```
 
 ![](Review_files/figure-markdown_github/unnamed-chunk-4-2.png)
 
 ``` r
-hist(df.cv.cows$CALC_ARRIVAL_BC)
+hist(df.cv.cows$CALC_ARRIVAL_BC_STD)
 ```
 
 ![](Review_files/figure-markdown_github/unnamed-chunk-4-3.png)
@@ -227,6 +235,8 @@ hist(df.cv.cows$DIM_DEHORN_BC_STD)
 
 ![](Review_files/figure-markdown_github/unnamed-chunk-4-6.png)
 
+A box-cox transformation was performed in order to make certain variables normally distributed. Otherwise models would not fit
+
 Model building
 --------------
 
@@ -239,6 +249,8 @@ baselineGLM <- glm(G_TOTAL ~ 1,
                          df.cv.cows, 
                          family = gaussian(link="log"))
 ```
+
+This is the baseline model without random effect of the animal
 
 ### Generalized Linear Mixed-Effects Models
 
@@ -253,6 +265,8 @@ baselineGLMM <- glmer(G_TOTAL ~ 1 + (1 | ANIMAL),
                   control=glmerControl(optimizer="bobyqa")
                   )
 ```
+
+This is the baseline model with random effect of the animal
 
 ### GLM vs GLMM model comparison
 
@@ -311,7 +325,7 @@ It seems that the random effect GLMM is increasing the model fit. Hence we will 
     ## Generalized linear mixed model fit by maximum likelihood (Laplace
     ##   Approximation) [glmerMod]
     ##  Family: gaussian  ( log )
-    ## Formula: G_TOTAL ~ CALC_ARRIVAL_STD + (1 | ANIMAL)
+    ## Formula: G_TOTAL ~ CALC_ARRIVAL_BC_STD + (1 | ANIMAL)
     ##    Data: df.cv.cows
     ## Control: glmerControl(optimizer = "bobyqa")
     ## 
@@ -329,9 +343,9 @@ It seems that the random effect GLMM is increasing the model fit. Hence we will 
     ## Number of obs: 367, groups:  ANIMAL, 360
     ## 
     ## Fixed effects:
-    ##                  Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)       0.91984    0.03263  28.193   <2e-16 ***
-    ## CALC_ARRIVAL_STD -0.01789    0.02771  -0.646    0.519    
+    ##                     Estimate Std. Error t value Pr(>|z|)    
+    ## (Intercept)          0.91984    0.03263  28.193   <2e-16 ***
+    ## CALC_ARRIVAL_BC_STD -0.01789    0.02771  -0.646    0.519    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
@@ -484,7 +498,7 @@ anova(baselineGLMM, glmer1 ,glmer2, glmer3, glmer4, glmer5, glmer6,  test = "Chi
     ## Models:
     ## baselineGLMM: G_TOTAL ~ 1 + (1 | ANIMAL)
     ## glmer1: G_TOTAL ~ N_DEHORNINGS + (1 | ANIMAL)
-    ## glmer2: G_TOTAL ~ CALC_ARRIVAL_STD + (1 | ANIMAL)
+    ## glmer2: G_TOTAL ~ CALC_ARRIVAL_BC_STD + (1 | ANIMAL)
     ## glmer4: G_TOTAL ~ DIM_DEHORN_BC_STD + (1 | ANIMAL)
     ## glmer3: G_TOTAL ~ CALC_PARITY + (1 | ANIMAL)
     ## glmer5: G_TOTAL ~ DH_QUARTER + (1 | ANIMAL)
@@ -508,69 +522,53 @@ anova(baselineGLMM, glmer1 ,glmer2, glmer3, glmer4, glmer5, glmer6,  test = "Chi
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
+Only model glmer4 and glmer5 improve model fit, we proceed with those. For example in the text it could say "Days in milk after dehorning (P&lt;2e-16) and the quarter of dehorning (P&lt;2e-16) affected the total growth". Eventually we do not write this as we need to also explore a multivariate model which contains both variables.
+
 ### Multivariate model building
 
 ``` r
-summary(glmer10 <- glmer(G_TOTAL ~ DH_QUARTER*DIM_DEHORN_BC_STD    
+glmer7 <- glmer(G_TOTAL ~ DH_QUARTER + DIM_DEHORN_BC_STD    
                          +  (1 | ANIMAL), 
                 df.cv.cows, 
                 family = gaussian(link="log"),
-                control=glmerControl(optimizer="bobyqa")))
+                control=glmerControl(optimizer="bobyqa"))
 ```
 
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_TOTAL ~ DH_QUARTER * DIM_DEHORN_BC_STD + (1 | ANIMAL)
-    ##    Data: df.cv.cows
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##    752.5    791.6   -366.3    732.5      357 
-    ## 
-    ## Scaled residuals: 
-    ##      Min       1Q   Median       3Q      Max 
-    ## -1.51125 -0.00239  0.06177  0.09828  1.35443 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.9786   0.9893  
-    ##  Residual             0.1598   0.3998  
-    ## Number of obs: 367, groups:  ANIMAL, 360
-    ## 
-    ## Fixed effects:
-    ##                               Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)                     2.3037     0.1048  21.992  < 2e-16 ***
-    ## DH_QUARTER2                    -1.5818     0.1027 -15.400  < 2e-16 ***
-    ## DH_QUARTER3                    -2.0024     0.1113 -17.997  < 2e-16 ***
-    ## DH_QUARTER4                    -1.8939     0.1362 -13.903  < 2e-16 ***
-    ## DIM_DEHORN_BC_STD              -1.4370     0.1432 -10.031  < 2e-16 ***
-    ## DH_QUARTER2:DIM_DEHORN_BC_STD   1.7712     0.1524  11.624  < 2e-16 ***
-    ## DH_QUARTER3:DIM_DEHORN_BC_STD   1.5820     0.2326   6.801 1.04e-11 ***
-    ## DH_QUARTER4:DIM_DEHORN_BC_STD   1.6950     0.1867   9.080  < 2e-16 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##              (Intr) DH_QUARTER2 DH_QUARTER3 DH_QUARTER4 DIM_DE
-    ## DH_QUARTER2  -0.741                                           
-    ## DH_QUARTER3  -0.705  0.824                                    
-    ## DH_QUARTER4  -0.693  0.701       0.692                        
-    ## DIM_DEHORN_  -0.404  0.427       0.704       0.420            
-    ## DH_QUARTER2:  0.374 -0.357      -0.709      -0.404      -0.980
-    ## DH_QUARTER3:  0.231 -0.214      -0.494      -0.255      -0.957
-    ## DH_QUARTER4:  0.219 -0.364      -0.563       0.016      -0.763
-    ##              DH_QUARTER2: DH_QUARTER3:
-    ## DH_QUARTER2                           
-    ## DH_QUARTER3                           
-    ## DH_QUARTER4                           
-    ## DIM_DEHORN_                           
-    ## DH_QUARTER2:                          
-    ## DH_QUARTER3:  0.931                   
-    ## DH_QUARTER4:  0.750        0.719
+    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl =
+    ## control$checkConv, : Model failed to converge with max|grad| = 0.181008
+    ## (tol = 0.001, component 1)
+
+    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
+    ##  - Rescale variables?
+
+However, the interaction between both variables should be explored.
 
 ``` r
-Anova(glmer10)
+glmer10 <- glmer(G_TOTAL ~ DH_QUARTER*DIM_DEHORN_BC_STD    
+                         +  (1 | ANIMAL), 
+                df.cv.cows, 
+                family = gaussian(link="log"),
+                control=glmerControl(optimizer="bobyqa"))
+anova(glmer7, glmer10, test = "Chisq")
+```
+
+    ## Data: df.cv.cows
+    ## Models:
+    ## glmer7: G_TOTAL ~ DH_QUARTER + DIM_DEHORN_BC_STD + (1 | ANIMAL)
+    ## glmer10: G_TOTAL ~ DH_QUARTER * DIM_DEHORN_BC_STD + (1 | ANIMAL)
+    ##         Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(>Chisq)    
+    ## glmer7   7 939.07 966.41 -462.54   925.07                             
+    ## glmer10 10 752.53 791.58 -366.27   732.53 192.54      3  < 2.2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Final model selection
+---------------------
+
+We finally choose the model with interactions because of lowest AIC (752)
+
+``` r
+Anova(glmer10, test = "Chisq")
 ```
 
     ## Analysis of Deviance Table (Type II Wald chisquare tests)
@@ -583,101 +581,7 @@ Anova(glmer10)
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-``` r
-summary(glmer11 <- glmer(G_TOTAL ~ N_DEHORNINGS + DH_QUARTER*CALC_ARRIVAL_STD 
-                         +  (1|ANIMAL), 
-                df.cv.cows, 
-                family = gaussian(link="log"),
-                control=glmerControl(optimizer="bobyqa")))
-```
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_TOTAL ~ N_DEHORNINGS + DH_QUARTER * CALC_ARRIVAL_STD + (1 |  
-    ##     ANIMAL)
-    ##    Data: df.cv.cows
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##    516.6    559.6   -247.3    494.6      356 
-    ## 
-    ## Scaled residuals: 
-    ##      Min       1Q   Median       3Q      Max 
-    ## -0.95621  0.00960  0.03183  0.05917  0.62381 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 2.08973  1.446   
-    ##  Residual             0.07455  0.273   
-    ## Number of obs: 367, groups:  ANIMAL, 360
-    ## 
-    ## Fixed effects:
-    ##                              Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)                   2.92698    0.12520  23.379  < 2e-16 ***
-    ## N_DEHORNINGS3                -0.54820    0.11744  -4.668 3.05e-06 ***
-    ## DH_QUARTER2                  -2.87424    0.08410 -34.178  < 2e-16 ***
-    ## DH_QUARTER3                  -2.54567    0.08622 -29.525  < 2e-16 ***
-    ## DH_QUARTER4                  -2.94462    0.18833 -15.635  < 2e-16 ***
-    ## CALC_ARRIVAL_STD              1.57967    0.06425  24.588  < 2e-16 ***
-    ## DH_QUARTER2:CALC_ARRIVAL_STD -0.87258    0.05220 -16.716  < 2e-16 ***
-    ## DH_QUARTER3:CALC_ARRIVAL_STD -1.60701    0.11157 -14.404  < 2e-16 ***
-    ## DH_QUARTER4:CALC_ARRIVAL_STD -2.43438    0.19355 -12.577  < 2e-16 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##              (Intr) N_DEHO DH_QUARTER2 DH_QUARTER3 DH_QUARTER4 CALC_A
-    ## N_DEHORNING  -0.222                                                  
-    ## DH_QUARTER2  -0.378 -0.312                                           
-    ## DH_QUARTER3  -0.354 -0.369  0.985                                    
-    ## DH_QUARTER4  -0.451  0.098  0.330       0.311                        
-    ## CALC_ARRIVA   0.494 -0.660 -0.486      -0.444      -0.341            
-    ## DH_QUARTER2: -0.368 -0.256  0.919       0.945       0.302      -0.530
-    ## DH_QUARTER3: -0.020 -0.869  0.700       0.737       0.089       0.229
-    ## DH_QUARTER4:  0.054  0.257  0.196       0.174      -0.704      -0.389
-    ##              DH_QUARTER2: DH_QUARTER3:
-    ## N_DEHORNING                           
-    ## DH_QUARTER2                           
-    ## DH_QUARTER3                           
-    ## DH_QUARTER4                           
-    ## CALC_ARRIVA                           
-    ## DH_QUARTER2:                          
-    ## DH_QUARTER3:  0.623                   
-    ## DH_QUARTER4:  0.195       -0.084
-
-``` r
-Anova(glmer11)
-```
-
-    ## Analysis of Deviance Table (Type II Wald chisquare tests)
-    ## 
-    ## Response: G_TOTAL
-    ##                                Chisq Df Pr(>Chisq)    
-    ## N_DEHORNINGS                  21.787  1  3.046e-06 ***
-    ## DH_QUARTER                  2633.067  3  < 2.2e-16 ***
-    ## CALC_ARRIVAL_STD            1684.102  1  < 2.2e-16 ***
-    ## DH_QUARTER:CALC_ARRIVAL_STD  432.646  3  < 2.2e-16 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Final model selection
----------------------
-
-``` r
-anova(glmer10, glmer11, test = "Chisq")
-```
-
-    ## Data: df.cv.cows
-    ## Models:
-    ## glmer10: G_TOTAL ~ DH_QUARTER * DIM_DEHORN_BC_STD + (1 | ANIMAL)
-    ## glmer11: G_TOTAL ~ N_DEHORNINGS + DH_QUARTER * CALC_ARRIVAL_STD + (1 | 
-    ## glmer11:     ANIMAL)
-    ##         Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(>Chisq)    
-    ## glmer10 10 752.53 791.58 -366.27   732.53                             
-    ## glmer11 11 516.64 559.60 -247.32   494.64 237.89      1  < 2.2e-16 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+In the text it will say that "the quarter of dehorning (P&lt;2e-16)" had on overall effect on the total growth". The LSMmeans (see further) can be used to show how this effect was. The "Days in milk" had an effect on the total growth within the quarter of dehorning. This effect can be explored using the effects plot.
 
 ### Interaction modelling
 
@@ -686,10 +590,9 @@ To understand the effect of the interaction, an effects plot was created
 ``` r
 plot(effect("DH_QUARTER:DIM_DEHORN_BC_STD", 
             glmer10, 
-            #xlevels=list(CALC_ARRIVAL=900:2000), 
             multiline=TRUE),
-     main = "Interaction between dehorn season and bc_std days since last dehorn",
-     xlab = "Days since arrival",
+     main = "Interaction between dehorn season and bc_std days since last calving",
+     xlab = "Days since last calving",
      ylab = "Total growth (g/day)")
 ```
 
@@ -701,31 +604,28 @@ Next piece is used to show it on non transformed scale
 glmer10b <- glmer(G_TOTAL~ 
                         DH_QUARTER*DIM_DEHORN + 
                         (1|ANIMAL), 
-                      df.cv.cows, 
+                      df.cv.cows,
                       family = gaussian(link="log"),
-                      control=glmerControl(optimizer="bobyqa")
+                      control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                      nAGQ = 2
                       )
 ```
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control
-    ## $checkConv, : unable to evaluate scaled gradient
+    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl =
+    ## control$checkConv, : unable to evaluate scaled gradient
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control
-    ## $checkConv, : Model failed to converge: degenerate Hessian with 1 negative
-    ## eigenvalues
+    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl =
+    ## control$checkConv, : Model failed to converge: degenerate Hessian with 1
+    ## negative eigenvalues
 
 ``` r
 plot(effect("DH_QUARTER:DIM_DEHORN", 
             glmer10b, 
-            #xlevels=list(CALC_ARRIVAL=900:2000), 
             multiline=TRUE),
-     main = "Interaction between dehorn season and days since last dehorn",
-     xlab = "Days since arrival",
+     main = "Interaction between dehorn season and days since last calving",
+     xlab = "Days since last calving",
      ylab = "Total growth (g/day)")
 ```
-
-    ## Warning in vcov.merMod(mod): variance-covariance matrix computed from finite-difference Hessian is
-    ## not positive definite or contains NA values: falling back to var-cov estimated from RX
 
 ![](Review_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
@@ -750,41 +650,28 @@ Least square means, Tukey adjusted
     ## NOTE: Results may be misleading due to involvement in interactions
 
     ## $lsmeans
-    ##  DH_QUARTER  response        SE df asymp.LCL asymp.UCL
-    ##  1          10.011295 1.0487128 NA  8.153131 12.292951
-    ##  2           2.058454 0.1537949 NA  1.778053  2.383075
-    ##  3           1.351652 0.1125234 NA  1.148162  1.591206
-    ##  4           1.506568 0.1487748 NA  1.241458  1.828292
+    ##  DH_QUARTER response    SE  df asymp.LCL asymp.UCL
+    ##  1              4.51 0.596 Inf      3.48      5.85
+    ##  2              2.30 0.223 Inf      1.90      2.78
+    ##  3              2.18 0.263 Inf      1.72      2.76
+    ##  4              2.56 0.311 Inf      2.01      3.25
     ## 
     ## Confidence level used: 0.95 
     ## Intervals are back-transformed from the log scale 
     ## 
     ## $contrasts
-    ##  contrast response.ratio         SE df z.ratio p.value
-    ##  1 - 2         4.8635016 0.49955205 NA  15.400  <.0001
-    ##  1 - 3         7.4067122 0.82409589 NA  17.997  <.0001
-    ##  1 - 4         6.6451000 0.90520090 NA  13.903  <.0001
-    ##  2 - 3         1.5229176 0.09741949 NA   6.575  <.0001
-    ##  2 - 4         1.3663201 0.13315263 NA   3.203  0.0074
-    ##  3 - 4         0.8971727 0.08947347 NA  -1.088  0.6969
+    ##  contrast ratio    SE  df z.ratio p.value
+    ##  1 / 2    1.962 0.279 Inf  4.730  <.0001 
+    ##  1 / 3    2.070 0.348 Inf  4.326  0.0001 
+    ##  1 / 4    1.765 0.298 Inf  3.366  0.0043 
+    ##  2 / 3    1.055 0.161 Inf  0.351  0.9851 
+    ##  2 / 4    0.900 0.146 Inf -0.650  0.9156 
+    ##  3 / 4    0.853 0.147 Inf -0.921  0.7934 
     ## 
     ## P value adjustment: tukey method for comparing a family of 4 estimates 
     ## Tests are performed on the log scale
 
     ## Loading required package: multcompView
-    ## NOTE: Results may be misleading due to involvement in interactions
-
-    ##  DH_QUARTER    lsmean         SE df  asymp.LCL asymp.UCL .group
-    ##  3          0.3013274 0.08324881 NA 0.09396165 0.5086931  a    
-    ##  4          0.4098343 0.09875082 NA 0.16385437 0.6558142  a    
-    ##  2          0.7219553 0.07471376 NA 0.53584969 0.9080610   b   
-    ##  1          2.3037140 0.10475296 NA 2.04278328 2.5646447    c  
-    ## 
-    ## Results are given on the log (not the response) scale. 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: sidak method for 4 estimates 
-    ## P value adjustment: tukey method for comparing a family of 4 estimates 
-    ## significance level used: alpha = 0.05
 
 Hypothesis 2 - Factors influencing the total growth of the horn in males and females
 ====================================================================================
@@ -1148,9 +1035,9 @@ glmer11b <- glmer(G_TOTAL ~ N_DEHORNINGS*CALC_AGE + B_QUARTER
                 control=glmerControl(optimizer="bobyqa"))
 ```
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control
-    ## $checkConv, : Model failed to converge with max|grad| = 180.845 (tol =
-    ## 0.001, component 1)
+    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl =
+    ## control$checkConv, : Model failed to converge with max|grad| = 180.845 (tol
+    ## = 0.001, component 1)
 
     ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
     ##  - Rescale variables?;Model is nearly unidentifiable: large eigenvalue ratio
@@ -1190,75 +1077,48 @@ Least square means, Tukey adjusted
     ## NOTE: Results may be misleading due to involvement in interactions
 
     ## $lsmeans
-    ##  N_DEHORNINGS  response         SE df asymp.LCL asymp.UCL
-    ##  1            0.7389862 0.01938610 NA 0.7019505 0.7779761
-    ##  2            2.5714228 0.06389985 NA 2.4491824 2.6997643
-    ##  3            2.4066859 0.09073169 NA 2.2352662 2.5912516
+    ##  N_DEHORNINGS response     SE  df asymp.LCL asymp.UCL
+    ##  1               0.739 0.0194 Inf     0.702     0.778
+    ##  2               2.571 0.0639 Inf     2.449     2.700
+    ##  3               2.407 0.0907 Inf     2.235     2.591
     ## 
     ## Results are averaged over the levels of: B_QUARTER 
     ## Confidence level used: 0.95 
     ## Intervals are back-transformed from the log scale 
     ## 
     ## $contrasts
-    ##  contrast response.ratio          SE df z.ratio p.value
-    ##  1 - 2         0.2873842 0.008349513 NA -42.919  <.0001
-    ##  1 - 3         0.3070555 0.012390163 NA -29.261  <.0001
-    ##  2 - 3         1.0684497 0.031272123 NA   2.262  0.0613
+    ##  contrast ratio      SE  df z.ratio p.value
+    ##  1 / 2    0.287 0.00835 Inf -42.919 <.0001 
+    ##  1 / 3    0.307 0.01239 Inf -29.261 <.0001 
+    ##  2 / 3    1.068 0.03127 Inf   2.262 0.0613 
     ## 
     ## Results are averaged over the levels of: B_QUARTER 
     ## P value adjustment: tukey method for comparing a family of 3 estimates 
     ## Tests are performed on the log scale
 
     ## $lsmeans
-    ##  B_QUARTER response         SE df asymp.LCL asymp.UCL
-    ##  1         1.755982 0.04872903 NA  1.663026  1.854135
-    ##  2         1.553054 0.04409713 NA  1.468986  1.641933
-    ##  3         1.703962 0.06328984 NA  1.584324  1.832634
-    ##  4         1.633575 0.05644781 NA  1.526602  1.748043
+    ##  B_QUARTER response     SE  df asymp.LCL asymp.UCL
+    ##  1             1.76 0.0487 Inf      1.66      1.85
+    ##  2             1.55 0.0441 Inf      1.47      1.64
+    ##  3             1.70 0.0633 Inf      1.58      1.83
+    ##  4             1.63 0.0564 Inf      1.53      1.75
     ## 
     ## Results are averaged over the levels of: N_DEHORNINGS 
     ## Confidence level used: 0.95 
     ## Intervals are back-transformed from the log scale 
     ## 
     ## $contrasts
-    ##  contrast response.ratio         SE df z.ratio p.value
-    ##  1 - 2         1.1306640 0.03333938 NA   4.165  0.0002
-    ##  1 - 3         1.0305292 0.03875403 NA   0.800  0.8546
-    ##  1 - 4         1.0749323 0.03860925 NA   2.012  0.1835
-    ##  2 - 3         0.9114372 0.03368811 NA  -2.509  0.0585
-    ##  2 - 4         0.9507089 0.03303821 NA  -1.455  0.4653
-    ##  3 - 4         1.0430877 0.04457728 NA   0.987  0.7568
+    ##  contrast ratio     SE  df z.ratio p.value
+    ##  1 / 2    1.131 0.0333 Inf  4.165  0.0002 
+    ##  1 / 3    1.031 0.0388 Inf  0.800  0.8546 
+    ##  1 / 4    1.075 0.0386 Inf  2.012  0.1835 
+    ##  2 / 3    0.911 0.0337 Inf -2.509  0.0585 
+    ##  2 / 4    0.951 0.0330 Inf -1.455  0.4653 
+    ##  3 / 4    1.043 0.0446 Inf  0.987  0.7568 
     ## 
     ## Results are averaged over the levels of: N_DEHORNINGS 
     ## P value adjustment: tukey method for comparing a family of 4 estimates 
     ## Tests are performed on the log scale
-
-    ## NOTE: Results may be misleading due to involvement in interactions
-
-    ##  N_DEHORNINGS     lsmean         SE df  asymp.LCL  asymp.UCL .group
-    ##  1            -0.3024760 0.02623337 NA -0.3651144 -0.2398376  a    
-    ##  3             0.8782507 0.03769985 NA  0.7882333  0.9682680   b   
-    ##  2             0.9444594 0.02485000 NA  0.8851241  1.0037946   b   
-    ## 
-    ## Results are averaged over the levels of: B_QUARTER 
-    ## Results are given on the log (not the response) scale. 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: sidak method for 3 estimates 
-    ## P value adjustment: tukey method for comparing a family of 3 estimates 
-    ## significance level used: alpha = 0.05
-
-    ##  B_QUARTER    lsmean         SE df asymp.LCL asymp.UCL .group
-    ##  2         0.4402234 0.02839382 NA 0.3694968 0.5109500  a    
-    ##  4         0.4907708 0.03455477 NA 0.4046977 0.5768438  ab   
-    ##  3         0.5329560 0.03714276 NA 0.4404366 0.6254755  ab   
-    ##  1         0.5630285 0.02775030 NA 0.4939048 0.6321521   b   
-    ## 
-    ## Results are averaged over the levels of: N_DEHORNINGS 
-    ## Results are given on the log (not the response) scale. 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: sidak method for 4 estimates 
-    ## P value adjustment: tukey method for comparing a family of 4 estimates 
-    ## significance level used: alpha = 0.05
 
 Hypothesis 3 - Factors influencing the growth of the anterior horn weight in males and females
 ==============================================================================================
@@ -1636,9 +1496,9 @@ summary(glmer7 <- glmer(G_AH_W ~
                         family = gaussian(link="log")))
 ```
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control
-    ## $checkConv, : Model failed to converge with max|grad| = 1.15535 (tol =
-    ## 0.001, component 1)
+    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl =
+    ## control$checkConv, : Model failed to converge with max|grad| = 1.15535 (tol
+    ## = 0.001, component 1)
 
     ## Generalized linear mixed model fit by maximum likelihood (Laplace
     ##   Approximation) [glmerMod]
@@ -1736,9 +1596,9 @@ glmer7b <- glmer(G_AH_W~
                       )
 ```
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control
-    ## $checkConv, : Model failed to converge with max|grad| = 168.364 (tol =
-    ## 0.001, component 1)
+    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl =
+    ## control$checkConv, : Model failed to converge with max|grad| = 168.364 (tol
+    ## = 0.001, component 1)
 
     ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
     ##  - Rescale variables?;Model is nearly unidentifiable: large eigenvalue ratio
@@ -1761,75 +1621,48 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
     ## NOTE: Results may be misleading due to involvement in interactions
 
     ## $lsmeans
-    ##  N_DEHORNINGS  response         SE df asymp.LCL asymp.UCL
-    ##  1            0.6397139 0.01530551 NA 0.6104082 0.6704267
-    ##  2            2.0764452 0.04788768 NA 1.9846767 2.1724569
-    ##  3            2.0301290 0.07353970 NA 1.8909915 2.1795041
+    ##  N_DEHORNINGS response     SE  df asymp.LCL asymp.UCL
+    ##  1                0.64 0.0153 Inf      0.61      0.67
+    ##  2                2.08 0.0479 Inf      1.98      2.17
+    ##  3                2.03 0.0735 Inf      1.89      2.18
     ## 
     ## Results are averaged over the levels of: B_QUARTER 
     ## Confidence level used: 0.95 
     ## Intervals are back-transformed from the log scale 
     ## 
     ## $contrasts
-    ##  contrast response.ratio          SE df z.ratio p.value
-    ##  1 - 2         0.3080813 0.008287881 NA -43.767  <.0001
-    ##  1 - 3         0.3151100 0.012186796 NA -29.860  <.0001
-    ##  2 - 3         1.0228144 0.029926666 NA   0.771  0.7209
+    ##  contrast ratio      SE  df z.ratio p.value
+    ##  1 / 2    0.308 0.00829 Inf -43.767 <.0001 
+    ##  1 / 3    0.315 0.01219 Inf -29.860 <.0001 
+    ##  2 / 3    1.023 0.02993 Inf   0.771 0.7209 
     ## 
     ## Results are averaged over the levels of: B_QUARTER 
     ## P value adjustment: tukey method for comparing a family of 3 estimates 
     ## Tests are performed on the log scale
 
     ## $lsmeans
-    ##  B_QUARTER response         SE df asymp.LCL asymp.UCL
-    ##  1         1.450442 0.03743562 NA  1.378895  1.525702
-    ##  2         1.330943 0.03536950 NA  1.263394  1.402103
-    ##  3         1.418064 0.04908774 NA  1.325045  1.517613
-    ##  4         1.371148 0.04429296 NA  1.287027  1.460768
+    ##  B_QUARTER response     SE  df asymp.LCL asymp.UCL
+    ##  1             1.45 0.0374 Inf      1.38      1.53
+    ##  2             1.33 0.0354 Inf      1.26      1.40
+    ##  3             1.42 0.0491 Inf      1.33      1.52
+    ##  4             1.37 0.0443 Inf      1.29      1.46
     ## 
     ## Results are averaged over the levels of: N_DEHORNINGS 
     ## Confidence level used: 0.95 
     ## Intervals are back-transformed from the log scale 
     ## 
     ## $contrasts
-    ##  contrast response.ratio         SE df z.ratio p.value
-    ##  1 - 2         1.0897857 0.03047418 NA   3.075  0.0113
-    ##  1 - 3         1.0228330 0.03602988 NA   0.641  0.9187
-    ##  1 - 4         1.0578303 0.03544831 NA   1.678  0.3355
-    ##  2 - 3         0.9385635 0.03277110 NA  -1.816  0.2657
-    ##  2 - 4         0.9706774 0.03189385 NA  -0.906  0.8018
-    ##  3 - 4         1.0342161 0.04126213 NA   0.843  0.8338
+    ##  contrast ratio     SE  df z.ratio p.value
+    ##  1 / 2    1.090 0.0305 Inf  3.075  0.0113 
+    ##  1 / 3    1.023 0.0360 Inf  0.641  0.9187 
+    ##  1 / 4    1.058 0.0354 Inf  1.678  0.3355 
+    ##  2 / 3    0.939 0.0328 Inf -1.816  0.2657 
+    ##  2 / 4    0.971 0.0319 Inf -0.906  0.8018 
+    ##  3 / 4    1.034 0.0413 Inf  0.843  0.8338 
     ## 
     ## Results are averaged over the levels of: N_DEHORNINGS 
     ## P value adjustment: tukey method for comparing a family of 4 estimates 
     ## Tests are performed on the log scale
-
-    ## NOTE: Results may be misleading due to involvement in interactions
-
-    ##  N_DEHORNINGS     lsmean         SE df  asymp.LCL  asymp.UCL .group
-    ##  1            -0.4467342 0.02392556 NA -0.5038621 -0.3896062  a    
-    ##  3             0.7080993 0.03622415 NA  0.6216056  0.7945931   b   
-    ##  2             0.7306574 0.02306234 NA  0.6755906  0.7857242   b   
-    ## 
-    ## Results are averaged over the levels of: B_QUARTER 
-    ## Results are given on the log (not the response) scale. 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: sidak method for 3 estimates 
-    ## P value adjustment: tukey method for comparing a family of 3 estimates 
-    ## significance level used: alpha = 0.05
-
-    ##  B_QUARTER    lsmean         SE df asymp.LCL asymp.UCL .group
-    ##  2         0.2858875 0.02657478 NA 0.2196919 0.3520830  a    
-    ##  4         0.3156485 0.03230356 NA 0.2351831 0.3961139  ab   
-    ##  3         0.3492923 0.03461604 NA 0.2630667 0.4355179  ab   
-    ##  1         0.3718685 0.02580980 NA 0.3075785 0.4361585   b   
-    ## 
-    ## Results are averaged over the levels of: N_DEHORNINGS 
-    ## Results are given on the log (not the response) scale. 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: sidak method for 4 estimates 
-    ## P value adjustment: tukey method for comparing a family of 4 estimates 
-    ## significance level used: alpha = 0.05
 
 Hypothesis 4 - Factors influencing the growth of the anterior horn length in males and females
 ==============================================================================================
@@ -2305,9 +2138,9 @@ glmer8b <- glmer(G_AH_L~
                       )
 ```
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control
-    ## $checkConv, : Model failed to converge with max|grad| = 280.452 (tol =
-    ## 0.001, component 1)
+    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl =
+    ## control$checkConv, : Model failed to converge with max|grad| = 280.452 (tol
+    ## = 0.001, component 1)
 
     ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
     ##  - Rescale variables?;Model is nearly unidentifiable: large eigenvalue ratio
@@ -2330,75 +2163,48 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
     ## NOTE: Results may be misleading due to involvement in interactions
 
     ## $lsmeans
-    ##  N_DEHORNINGS  response          SE df asymp.LCL asymp.UCL
-    ##  1            0.1530704 0.002498746 NA 0.1482505 0.1580470
-    ##  2            0.2634386 0.004329054 NA 0.2550890 0.2720615
-    ##  3            0.2752243 0.009233329 NA 0.2577095 0.2939295
+    ##  N_DEHORNINGS response      SE  df asymp.LCL asymp.UCL
+    ##  1               0.153 0.00250 Inf     0.148     0.158
+    ##  2               0.263 0.00433 Inf     0.255     0.272
+    ##  3               0.275 0.00923 Inf     0.258     0.294
     ## 
     ## Results are averaged over the levels of: B_QUARTER 
     ## Confidence level used: 0.95 
     ## Intervals are back-transformed from the log scale 
     ## 
     ## $contrasts
-    ##  contrast response.ratio         SE df z.ratio p.value
-    ##  1 - 2         0.5810476 0.01127365 NA -27.982  <.0001
-    ##  1 - 3         0.5561660 0.01949309 NA -16.739  <.0001
-    ##  2 - 3         0.9571780 0.03075025 NA  -1.362  0.3608
+    ##  contrast ratio     SE  df z.ratio p.value
+    ##  1 / 2    0.581 0.0113 Inf -27.982 <.0001 
+    ##  1 / 3    0.556 0.0195 Inf -16.739 <.0001 
+    ##  2 / 3    0.957 0.0308 Inf  -1.362 0.3608 
     ## 
     ## Results are averaged over the levels of: B_QUARTER 
     ## P value adjustment: tukey method for comparing a family of 3 estimates 
     ## Tests are performed on the log scale
 
     ## $lsmeans
-    ##  B_QUARTER  response          SE df asymp.LCL asymp.UCL
-    ##  1         0.2296780 0.004309093 NA 0.2213858 0.2382809
-    ##  2         0.2209174 0.004355748 NA 0.2125432 0.2296216
-    ##  3         0.2238710 0.005637163 NA 0.2130906 0.2351968
-    ##  4         0.2179362 0.005206755 NA 0.2079664 0.2283839
+    ##  B_QUARTER response      SE  df asymp.LCL asymp.UCL
+    ##  1            0.230 0.00431 Inf     0.221     0.238
+    ##  2            0.221 0.00436 Inf     0.213     0.230
+    ##  3            0.224 0.00564 Inf     0.213     0.235
+    ##  4            0.218 0.00521 Inf     0.208     0.228
     ## 
     ## Results are averaged over the levels of: N_DEHORNINGS 
     ## Confidence level used: 0.95 
     ## Intervals are back-transformed from the log scale 
     ## 
     ## $contrasts
-    ##  contrast response.ratio         SE df z.ratio p.value
-    ##  1 - 2         1.0396555 0.02105168 NA   1.921  0.2193
-    ##  1 - 3         1.0259393 0.02545240 NA   1.032  0.7305
-    ##  1 - 4         1.0538775 0.02521870 NA   2.193  0.1251
-    ##  2 - 3         0.9868069 0.02540268 NA  -0.516  0.9553
-    ##  2 - 4         1.0136796 0.02414847 NA   0.570  0.9409
-    ##  3 - 4         1.0272319 0.02865035 NA   0.963  0.7703
+    ##  contrast ratio     SE  df z.ratio p.value
+    ##  1 / 2    1.040 0.0211 Inf  1.921  0.2193 
+    ##  1 / 3    1.026 0.0255 Inf  1.032  0.7305 
+    ##  1 / 4    1.054 0.0252 Inf  2.193  0.1251 
+    ##  2 / 3    0.987 0.0254 Inf -0.516  0.9553 
+    ##  2 / 4    1.014 0.0241 Inf  0.570  0.9409 
+    ##  3 / 4    1.027 0.0287 Inf  0.963  0.7703 
     ## 
     ## Results are averaged over the levels of: N_DEHORNINGS 
     ## P value adjustment: tukey method for comparing a family of 4 estimates 
     ## Tests are performed on the log scale
-
-    ## NOTE: Results may be misleading due to involvement in interactions
-
-    ##  N_DEHORNINGS    lsmean         SE df asymp.LCL asymp.UCL .group
-    ##  1            -1.876857 0.01632417 NA -1.915835 -1.837880  a    
-    ##  2            -1.333935 0.01643287 NA -1.373172 -1.294697   b   
-    ##  3            -1.290169 0.03354838 NA -1.370274 -1.210064   b   
-    ## 
-    ## Results are averaged over the levels of: B_QUARTER 
-    ## Results are given on the log (not the response) scale. 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: sidak method for 3 estimates 
-    ## P value adjustment: tukey method for comparing a family of 3 estimates 
-    ## significance level used: alpha = 0.05
-
-    ##  B_QUARTER    lsmean         SE df asymp.LCL asymp.UCL .group
-    ##  4         -1.523553 0.02389119 NA -1.583064 -1.464042  a    
-    ##  2         -1.509966 0.01971663 NA -1.559079 -1.460854  a    
-    ##  3         -1.496685 0.02518041 NA -1.559408 -1.433963  a    
-    ##  1         -1.471077 0.01876145 NA -1.517810 -1.424344  a    
-    ## 
-    ## Results are averaged over the levels of: N_DEHORNINGS 
-    ## Results are given on the log (not the response) scale. 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: sidak method for 4 estimates 
-    ## P value adjustment: tukey method for comparing a family of 4 estimates 
-    ## significance level used: alpha = 0.05
 
 Hypothesis 5 - Factors influencing the growth of the anterior horn circumference (mm/day) in males and females
 ==============================================================================================================
@@ -2548,9 +2354,9 @@ The GLMM performs better
     ## N_DEHORNINGS2 -0.584              
     ## N_DEHORNINGS3 -0.507  0.511
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control
-    ## $checkConv, : Model failed to converge with max|grad| = 0.0744355 (tol =
-    ## 0.001, component 1)
+    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl =
+    ## control$checkConv, : Model failed to converge with max|grad| = 0.0744355
+    ## (tol = 0.001, component 1)
 
     ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
     ##  - Rescale variables?
@@ -2853,9 +2659,9 @@ glmer8b <- glmer(G_AH_C~
                       )
 ```
 
-    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control
-    ## $checkConv, : Model failed to converge with max|grad| = 138.599 (tol =
-    ## 0.001, component 1)
+    ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl =
+    ## control$checkConv, : Model failed to converge with max|grad| = 138.599 (tol
+    ## = 0.001, component 1)
 
     ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
     ##  - Rescale variables?;Model is nearly unidentifiable: large eigenvalue ratio
@@ -2878,32 +2684,19 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
     ## NOTE: Results may be misleading due to involvement in interactions
 
     ## $lsmeans
-    ##  N_DEHORNINGS  response          SE df asymp.LCL asymp.UCL
-    ##  1            0.3464408 0.007961659 NA 0.3311825 0.3624022
-    ##  2            1.0437297 0.019133169 NA 1.0068951 1.0819119
-    ##  3            1.3372970 0.046904311 NA 1.2484549 1.4324612
+    ##  N_DEHORNINGS response      SE  df asymp.LCL asymp.UCL
+    ##  1               0.346 0.00796 Inf     0.331     0.362
+    ##  2               1.044 0.01913 Inf     1.007     1.082
+    ##  3               1.337 0.04690 Inf     1.248     1.432
     ## 
     ## Confidence level used: 0.95 
     ## Intervals are back-transformed from the log scale 
     ## 
     ## $contrasts
-    ##  contrast response.ratio          SE df z.ratio p.value
-    ##  1 - 2         0.3319258 0.008410353 NA -43.525  <.0001
-    ##  1 - 3         0.2590605 0.010269526 NA -34.073  <.0001
-    ##  2 - 3         0.7804771 0.025282568 NA  -7.651  <.0001
+    ##  contrast ratio      SE  df z.ratio p.value
+    ##  1 / 2    0.332 0.00841 Inf -43.525 <.0001 
+    ##  1 / 3    0.259 0.01027 Inf -34.073 <.0001 
+    ##  2 / 3    0.780 0.02528 Inf  -7.651 <.0001 
     ## 
     ## P value adjustment: tukey method for comparing a family of 3 estimates 
     ## Tests are performed on the log scale
-
-    ## NOTE: Results may be misleading due to involvement in interactions
-
-    ##  N_DEHORNINGS      lsmean         SE df     asymp.LCL   asymp.UCL .group
-    ##  1            -1.06004321 0.02298130 NA -1.1149165224 -1.00516990  a    
-    ##  2             0.04280057 0.01833154 NA -0.0009703357  0.08657147   b   
-    ##  3             0.29065040 0.03507397 NA  0.2069029640  0.37439785    c  
-    ## 
-    ## Results are given on the log (not the response) scale. 
-    ## Confidence level used: 0.95 
-    ## Conf-level adjustment: sidak method for 3 estimates 
-    ## P value adjustment: tukey method for comparing a family of 3 estimates 
-    ## significance level used: alpha = 0.05

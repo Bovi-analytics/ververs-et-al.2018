@@ -5,7 +5,7 @@ output:
     toc: true
     toc_depth: 3
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 This is a notebook for the dehorning data of Ververs et al. (2018). This extra notebook shows the reviewers request to test random/repeated effects. 
@@ -129,8 +129,14 @@ df.cv.cows <- na.omit(df.cv[!df.cv$N_DEHORNINGS == "1", c("ANIMAL","CALC_ARRIVAL
 #Set all number of dehornings larger then 3 equal to 3 
 df.cv.cows[df.cv.cows$N_DEHORNINGS == "4",]$N_DEHORNINGS <- "3"
 df.cv.cows[df.cv.cows$N_DEHORNINGS == "5",]$N_DEHORNINGS <- "3"
+df.cv.cows$N_DEHORNINGS <-  droplevels(df.cv.cows$N_DEHORNINGS)
+
 #Not enough animals in the 4th parity
 df.cv.cows[df.cv.cows$CALC_PARITY == "4",]$CALC_PARITY <- "3"
+df.cv.cows$CALC_PARITY <- droplevels(df.cv.cows$CALC_PARITY)
+
+
+
 df.cv.cows$ANIMAL <- as.factor(df.cv.cows$ANIMAL)
 
 summary(df.cv.cows)
@@ -142,10 +148,10 @@ xtabs(~C_QUARTER+N_DEHORNINGS, df.cv.cows)
 
 ```{r}
 df.cv.cows$CALC_ARRIVAL_BC <- boxcoxTransform(df.cv.cows$CALC_ARRIVAL, lambda = 1)
-df.cv.cows$CALC_ARRIVAL_STD <- scale(df.cv.cows$CALC_ARRIVAL)
+df.cv.cows$CALC_ARRIVAL_BC_STD <- scale(df.cv.cows$CALC_ARRIVAL_BC)
 hist(df.cv.cows$CALC_ARRIVAL)
-hist(df.cv.cows$CALC_ARRIVAL_STD)
 hist(df.cv.cows$CALC_ARRIVAL_BC)
+hist(df.cv.cows$CALC_ARRIVAL_BC_STD)
 
 df.cv.cows$DIM_DEHORN_BC <- boxcoxTransform(df.cv.cows$DIM_DEHORN, lambda = 0.5)
 df.cv.cows$DIM_DEHORN_BC_STD <- scale(df.cv.cows$DIM_DEHORN_BC)
@@ -153,6 +159,8 @@ hist(df.cv.cows$DIM_DEHORN)
 hist(df.cv.cows$DIM_DEHORN_BC)
 hist(df.cv.cows$DIM_DEHORN_BC_STD)
 ```
+
+A box-cox transformation was performed in order to make certain variables normally distributed. Otherwise models would not fit
 
 ## Model building
 
@@ -165,6 +173,8 @@ baselineGLM <- glm(G_TOTAL ~ 1,
                          df.cv.cows, 
                          family = gaussian(link="log"))
 ```
+
+This is the baseline model without random effect of the animal
 
 ### Generalized Linear Mixed-Effects Models
 
@@ -180,6 +190,8 @@ baselineGLMM <- glmer(G_TOTAL ~ 1 + (1 | ANIMAL),
                   )
 ```
 
+This is the baseline model with random effect of the animal
+
 ### GLM vs GLMM model comparison
 
 ```{r}
@@ -190,14 +202,13 @@ It seems that the random effect GLMM is increasing the model fit.  Hence we will
 
 ### Univariate models
 
-
 ```{r, echo=FALSE}
 summary(glmer1 <- glmer(G_TOTAL ~ N_DEHORNINGS + (1| ANIMAL), 
                 df.cv.cows, 
                 family = gaussian(link="log"),
                 control=glmerControl(optimizer="bobyqa")
                   ))
-summary(glmer2 <- glmer(G_TOTAL ~ CALC_ARRIVAL_STD + (1| ANIMAL), 
+summary(glmer2 <- glmer(G_TOTAL ~ CALC_ARRIVAL_BC_STD + (1| ANIMAL), 
                 df.cv.cows, 
                 family = gaussian(link="log"),
                 control=glmerControl(optimizer="bobyqa")
@@ -232,31 +243,38 @@ summary(glmer6 <- glmer(G_TOTAL ~ C_QUARTER + (1| ANIMAL),
 anova(baselineGLMM, glmer1 ,glmer2, glmer3, glmer4, glmer5, glmer6,  test = "Chisq")
 ```
 
+Only model glmer4 and glmer5 improve model fit, we proceed with those. For example in the text it could say "Days in milk after dehorning (P<2e-16) and the quarter of dehorning (P<2e-16) affected the total growth". Eventually we do not write this as we need to also explore a multivariate model which contains both variables.
+
 ### Multivariate model building
 
 ```{r}
-summary(glmer10 <- glmer(G_TOTAL ~ DH_QUARTER*DIM_DEHORN_BC_STD    
+glmer7 <- glmer(G_TOTAL ~ DH_QUARTER + DIM_DEHORN_BC_STD    
                          +  (1 | ANIMAL), 
                 df.cv.cows, 
                 family = gaussian(link="log"),
-                control=glmerControl(optimizer="bobyqa")))
-Anova(glmer10)
+                control=glmerControl(optimizer="bobyqa"))
 ```
 
+However, the interaction between both variables should be explored.
+
 ```{r}
-summary(glmer11 <- glmer(G_TOTAL ~ N_DEHORNINGS + DH_QUARTER*CALC_ARRIVAL_STD 
-                         +  (1|ANIMAL), 
+glmer10 <- glmer(G_TOTAL ~ DH_QUARTER*DIM_DEHORN_BC_STD    
+                         +  (1 | ANIMAL), 
                 df.cv.cows, 
                 family = gaussian(link="log"),
-                control=glmerControl(optimizer="bobyqa")))
-Anova(glmer11)
+                control=glmerControl(optimizer="bobyqa"))
+anova(glmer7, glmer10, test = "Chisq")
 ```
 
 ## Final model selection 
 
+We finally choose the model with interactions because of lowest AIC (752)
+
 ```{r}
-anova(glmer10, glmer11, test = "Chisq")
+Anova(glmer10, test = "Chisq")
 ```
+
+In the text it will say that "the quarter of dehorning (P<2e-16)" had on overall effect on the total growth". The LSMmeans (see further) can be used to show how this effect was. The "Days in milk" had an effect on the total growth within the quarter of dehorning. This effect can be explored using the effects plot.
 
 ### Interaction modelling
 
@@ -265,13 +283,11 @@ To understand the effect of the interaction, an effects plot was created
 ```{r}
 plot(effect("DH_QUARTER:DIM_DEHORN_BC_STD", 
             glmer10, 
-            #xlevels=list(CALC_ARRIVAL=900:2000), 
             multiline=TRUE),
-     main = "Interaction between dehorn season and bc_std days since last dehorn",
-     xlab = "Days since arrival",
+     main = "Interaction between dehorn season and bc_std days since last calving",
+     xlab = "Days since last calving",
      ylab = "Total growth (g/day)")
 ```
-
 
 Next piece is used to show it on non transformed scale
 
@@ -279,19 +295,18 @@ Next piece is used to show it on non transformed scale
 glmer10b <- glmer(G_TOTAL~ 
                         DH_QUARTER*DIM_DEHORN + 
                         (1|ANIMAL), 
-                      df.cv.cows, 
+                      df.cv.cows,
                       family = gaussian(link="log"),
-                      control=glmerControl(optimizer="bobyqa")
+                      control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                      nAGQ = 2
                       )
 plot(effect("DH_QUARTER:DIM_DEHORN", 
             glmer10b, 
-            #xlevels=list(CALC_ARRIVAL=900:2000), 
             multiline=TRUE),
-     main = "Interaction between dehorn season and days since last dehorn",
-     xlab = "Days since arrival",
+     main = "Interaction between dehorn season and days since last calving",
+     xlab = "Days since last calving",
      ylab = "Total growth (g/day)")
 ```
-
 
 ### Least square means
 
@@ -307,17 +322,17 @@ Least square means, Tukey adjusted
 
 ```{r, echo=FALSE}
 
-lsmeans(glmer10, pairwise~DH_QUARTER, type = "response", adjust = "tukey" )
+lsmeans(glmer10b, pairwise~DH_QUARTER, type = "response", adjust = "tukey" )
 
 if (!require("multcompView")) {
   install.packages("multcompView", dependencies = TRUE)
   library(multcompView)
 }
 ## http://rcompanion.org/handbook/G_06.html
-cld(lsmeans(glmer10, pairwise~DH_QUARTER),
-          alpha=0.05,
-          Letters=letters,
-          adjust="tukey")
+##cld(lsmeans(glmer10b, pairwise~DH_QUARTER),
+##          alpha=0.05,
+##          Letters=letters,
+##          adjust="tukey")
 ```
 
 # Hypothesis 2 - Factors influencing the total growth of the horn in males and females
@@ -504,14 +519,14 @@ Least square means, Tukey adjusted
 lsmeans(glmer11, pairwise~N_DEHORNINGS, type = "response", adjust = "tukey" )
 lsmeans(glmer11, pairwise~B_QUARTER, type = "response", adjust = "tukey")
 # If you need the subscripts which differ
-cld(lsmeans(glmer11, pairwise~N_DEHORNINGS),
-          alpha=0.05,
-          Letters=letters,
-          adjust="tukey")
-cld(lsmeans(glmer11, pairwise~B_QUARTER),
-          alpha=0.05,
-          Letters=letters,
-          adjust="tukey")
+# cld(lsmeans(glmer11, pairwise~N_DEHORNINGS),
+#           alpha=0.05,
+#           Letters=letters,
+#           adjust="tukey")
+# cld(lsmeans(glmer11, pairwise~B_QUARTER),
+#           alpha=0.05,
+#           Letters=letters,
+#           adjust="tukey")
 ```
 
 # Hypothesis 3 - Factors influencing the growth of the anterior horn weight in males and females
@@ -666,14 +681,14 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
 lsmeans(glmer7, pairwise~N_DEHORNINGS, type = "response", adjust="tukey")
 lsmeans(glmer7, pairwise~ B_QUARTER, type = "response")
 # If you need the subscripts which differ
-cld(lsmeans(glmer7, pairwise~N_DEHORNINGS),
-          alpha=0.05,
-          Letters=letters,
-          adjust="tukey")
-cld(lsmeans(glmer7, pairwise~B_QUARTER),
-          alpha=0.05,
-          Letters=letters,
-          adjust="tukey")
+# cld(lsmeans(glmer7, pairwise~N_DEHORNINGS),
+#           alpha=0.05,
+#           Letters=letters,
+#           adjust="tukey")
+# cld(lsmeans(glmer7, pairwise~B_QUARTER),
+#           alpha=0.05,
+#           Letters=letters,
+#           adjust="tukey")
 ```
 
 # Hypothesis 4 - Factors influencing the growth of the anterior horn length in males and females
@@ -844,14 +859,14 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
 lsmeans(glmer8, pairwise~N_DEHORNINGS, type = "response", adjust="tukey")
 lsmeans(glmer8, pairwise~ B_QUARTER, type = "response")
 # If you need the subscripts which differ
-cld(lsmeans(glmer8, pairwise~N_DEHORNINGS),
-          alpha=0.05,
-          Letters=letters,
-          adjust="tukey")
-cld(lsmeans(glmer8, pairwise~B_QUARTER),
-          alpha=0.05,
-          Letters=letters,
-          adjust="tukey")
+# cld(lsmeans(glmer8, pairwise~N_DEHORNINGS),
+#           alpha=0.05,
+#           Letters=letters,
+#           adjust="tukey")
+# cld(lsmeans(glmer8, pairwise~B_QUARTER),
+#           alpha=0.05,
+#           Letters=letters,
+#           adjust="tukey")
 ```
 
 # Hypothesis 5 - Factors influencing the growth of the anterior horn circumference (mm/day) in males and females 
@@ -1024,10 +1039,10 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
 ```{r, echo=FALSE}
 lsmeans(glmer8, pairwise~N_DEHORNINGS, type = "response", adjust="tukey")
 # If you need the subscripts which differ
-cld(lsmeans(glmer8, pairwise~N_DEHORNINGS),
-          alpha=0.05,
-          Letters=letters,
-          adjust="tukey")
+# cld(lsmeans(glmer8, pairwise~N_DEHORNINGS),
+#           alpha=0.05,
+#           Letters=letters,
+#           adjust="tukey")
 ```
 
 
