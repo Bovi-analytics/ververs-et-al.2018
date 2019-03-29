@@ -29,6 +29,7 @@ Ververs et al. (2018) - Reviewers request
     -   [Final model selection](#final-model-selection-1)
         -   [Interaction modelling](#interaction-modelling-1)
         -   [Least square means](#least-square-means-1)
+        -   [Interaction trends](#interaction-trends)
 -   [Hypothesis 3 - Factors influencing the growth of the anterior horn weight in males and females](#hypothesis-3---factors-influencing-the-growth-of-the-anterior-horn-weight-in-males-and-females)
     -   [Data preparation](#data-preparation-2)
     -   [Data transformations of continuous variables](#data-transformations-of-continuous-variables-2)
@@ -42,6 +43,7 @@ Ververs et al. (2018) - Reviewers request
     -   [Final model selection](#final-model-selection-2)
         -   [Interaction modelling](#interaction-modelling-2)
         -   [Least square means](#least-square-means-2)
+        -   [Interaction estimates](#interaction-estimates)
 -   [Hypothesis 4 - Factors influencing the growth of the anterior horn length in males and females](#hypothesis-4---factors-influencing-the-growth-of-the-anterior-horn-length-in-males-and-females)
     -   [Data preparation](#data-preparation-3)
     -   [Data transformations of continuous variables](#data-transformations-of-continuous-variables-3)
@@ -55,6 +57,7 @@ Ververs et al. (2018) - Reviewers request
     -   [Final model selection](#final-model-selection-3)
         -   [Interaction modelling](#interaction-modelling-3)
         -   [Least square means](#least-square-means-3)
+        -   [Interaction estimates](#interaction-estimates-1)
 -   [Hypothesis 5 - Factors influencing the growth of the anterior horn circumference (mm/day) in males and females](#hypothesis-5---factors-influencing-the-growth-of-the-anterior-horn-circumference-mmday-in-males-and-females)
     -   [Data preparation](#data-preparation-4)
     -   [Data transformations of continuous variables](#data-transformations-of-continuous-variables-4)
@@ -68,6 +71,7 @@ Ververs et al. (2018) - Reviewers request
     -   [Final model selection](#final-model-selection-4)
         -   [Interaction modelling](#interaction-modelling-4)
         -   [Least square means](#least-square-means-4)
+        -   [Interaction estimates](#interaction-estimates-2)
 
 This is a notebook for the dehorning data of Ververs et al. (2018). This extra notebook shows the reviewers request to test random/repeated effects.
 
@@ -89,9 +93,14 @@ Currently the following R packages were loaded
 
     ## Loading required package: car
 
+    ## Loading required package: mvtnorm
+
     ## Loading required package: sjPlot
 
-    ## Learn more about sjPlot with 'browseVignettes("sjPlot")'.
+    ## Warning in checkMatrixPackageVersion(): Package version inconsistency detected.
+    ## TMB was built with Matrix version 1.2.15
+    ## Current Matrix version is 1.2.17
+    ## Please re-install 'TMB' from source using install.packages('TMB', type = 'source') or ask CRAN for a binary version of 'TMB' matching CRAN's 'Matrix' package
 
     ## Loading required package: lsmeans
 
@@ -291,202 +300,6 @@ It seems that the random effect GLMM is increasing the model fit. Hence we will 
 
 ### Univariate models
 
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_TOTAL ~ N_DEHORNINGS + (1 | ANIMAL)
-    ##    Data: df.cv.cows
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##   1126.5   1142.2   -559.3   1118.5      363 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -4.5187 -0.0994  0.0249  0.1465  4.6797 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.3877   0.6226  
-    ##  Residual             0.5789   0.7609  
-    ## Number of obs: 367, groups:  ANIMAL, 360
-    ## 
-    ## Fixed effects:
-    ##               Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)    0.90167    0.03678  24.513   <2e-16 ***
-    ## N_DEHORNINGS3  0.05310    0.05510   0.964    0.335    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##             (Intr)
-    ## N_DEHORNING -0.468
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_TOTAL ~ CALC_ARRIVAL_BC_STD + (1 | ANIMAL)
-    ##    Data: df.cv.cows
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##   1127.1   1142.7   -559.5   1119.1      363 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -4.5126 -0.0977  0.0278  0.1498  4.7306 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.3875   0.6225  
-    ##  Residual             0.5784   0.7605  
-    ## Number of obs: 367, groups:  ANIMAL, 360
-    ## 
-    ## Fixed effects:
-    ##                     Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)          0.91984    0.03263  28.193   <2e-16 ***
-    ## CALC_ARRIVAL_BC_STD -0.01789    0.02771  -0.646    0.519    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##             (Intr)
-    ## CALC_ARRIVA -0.074
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_TOTAL ~ CALC_PARITY + (1 | ANIMAL)
-    ##    Data: df.cv.cows
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##   1125.0   1144.5   -557.5   1115.0      362 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -4.5090 -0.1142  0.0343  0.1403  4.7256 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.3946   0.6281  
-    ##  Residual             0.5744   0.7579  
-    ## Number of obs: 367, groups:  ANIMAL, 360
-    ## 
-    ## Fixed effects:
-    ##              Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)   0.94566    0.04584  20.628   <2e-16 ***
-    ## CALC_PARITY2 -0.10048    0.06479  -1.551    0.121    
-    ## CALC_PARITY3  0.07440    0.09491   0.784    0.433    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##              (Intr) CALC_PARITY2
-    ## CALC_PARITY2 -0.644             
-    ## CALC_PARITY3 -0.488  0.357
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_TOTAL ~ DIM_DEHORN_BC_STD + (1 | ANIMAL)
-    ##    Data: df.cv.cows
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##   1106.7   1122.3   -549.4   1098.7      363 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -4.6083 -0.1072  0.0341  0.1449  4.2016 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.4277   0.6540  
-    ##  Residual             0.5387   0.7339  
-    ## Number of obs: 367, groups:  ANIMAL, 360
-    ## 
-    ## Fixed effects:
-    ##                   Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)        0.90301    0.03442  26.236  < 2e-16 ***
-    ## DIM_DEHORN_BC_STD  0.13445    0.03023   4.447  8.7e-06 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##             (Intr)
-    ## DIM_DEHORN_ -0.092
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_TOTAL ~ DH_QUARTER + (1 | ANIMAL)
-    ##    Data: df.cv.cows
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##    937.2    960.6   -462.6    925.2      361 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -3.6003 -0.0344  0.0734  0.1564  1.5285 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.4649   0.6818  
-    ##  Residual             0.3197   0.5654  
-    ## Number of obs: 367, groups:  ANIMAL, 360
-    ## 
-    ## Fixed effects:
-    ##             Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)  1.74075    0.07462  23.327   <2e-16 ***
-    ## DH_QUARTER2 -1.13169    0.07714 -14.671   <2e-16 ***
-    ## DH_QUARTER3 -0.89118    0.08269 -10.778   <2e-16 ***
-    ## DH_QUARTER4 -1.01910    0.10926  -9.327   <2e-16 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##             (Intr) DH_QUARTER2 DH_QUARTER3
-    ## DH_QUARTER2 -0.775                        
-    ## DH_QUARTER3 -0.734  0.703                 
-    ## DH_QUARTER4 -0.738  0.707       0.582
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_TOTAL ~ C_QUARTER + (1 | ANIMAL)
-    ##    Data: df.cv.cows
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##   1119.6   1143.0   -553.8   1107.6      361 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -4.5932 -0.0988  0.0321  0.1404  4.7218 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.3945   0.6281  
-    ##  Residual             0.5645   0.7514  
-    ## Number of obs: 367, groups:  ANIMAL, 360
-    ## 
-    ## Fixed effects:
-    ##             Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)  0.83571    0.04382  19.072  < 2e-16 ***
-    ## C_QUARTER2   0.08285    0.08002   1.035  0.30047    
-    ## C_QUARTER3   0.21494    0.06820   3.152  0.00162 ** 
-    ## C_QUARTER4   0.17187    0.09111   1.886  0.05925 .  
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##            (Intr) C_QUARTER2 C_QUARTER3
-    ## C_QUARTER2 -0.524                      
-    ## C_QUARTER3 -0.444  0.225               
-    ## C_QUARTER4 -0.371  0.198      0.162
-
 ### Univariate model comparison
 
 ``` r
@@ -670,8 +483,6 @@ Least square means, Tukey adjusted
     ## 
     ## P value adjustment: tukey method for comparing a family of 4 estimates 
     ## Tests are performed on the log scale
-
-    ## Loading required package: multcompView
 
 Hypothesis 2 - Factors influencing the total growth of the horn in males and females
 ====================================================================================
@@ -1064,11 +875,11 @@ This is the overal P-value per variables
     ## Analysis of Deviance Table (Type II Wald chisquare tests)
     ## 
     ## Response: G_TOTAL
-    ##                                 Chisq Df Pr(>Chisq)    
-    ## N_DEHORNINGS                 1987.219  2  < 2.2e-16 ***
-    ## CALC_AGE_BC_STD                 9.114  1  0.0025366 ** 
-    ## B_QUARTER                      18.486  3  0.0003491 ***
-    ## N_DEHORNINGS:CALC_AGE_BC_STD   59.630  2  1.126e-13 ***
+    ##                           Chisq Df Pr(>Chisq)    
+    ## N_DEHORNINGS          2280.5376  2    < 2e-16 ***
+    ## CALC_AGE                 0.9772  1    0.32289    
+    ## B_QUARTER                9.9686  3    0.01883 *  
+    ## N_DEHORNINGS:CALC_AGE  270.2135  2    < 2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -1078,9 +889,9 @@ Least square means, Tukey adjusted
 
     ## $lsmeans
     ##  N_DEHORNINGS response     SE  df asymp.LCL asymp.UCL
-    ##  1               0.739 0.0194 Inf     0.702     0.778
-    ##  2               2.571 0.0639 Inf     2.449     2.700
-    ##  3               2.407 0.0907 Inf     2.235     2.591
+    ##  1               0.743 0.0193 Inf     0.706     0.781
+    ##  2               2.816 0.0645 Inf     2.693     2.946
+    ##  3               2.777 0.0774 Inf     2.629     2.932
     ## 
     ## Results are averaged over the levels of: B_QUARTER 
     ## Confidence level used: 0.95 
@@ -1088,9 +899,9 @@ Least square means, Tukey adjusted
     ## 
     ## $contrasts
     ##  contrast ratio      SE  df z.ratio p.value
-    ##  1 / 2    0.287 0.00835 Inf -42.919 <.0001 
-    ##  1 / 3    0.307 0.01239 Inf -29.261 <.0001 
-    ##  2 / 3    1.068 0.03127 Inf   2.262 0.0613 
+    ##  1 / 2    0.264 0.00732 Inf -48.013 <.0001 
+    ##  1 / 3    0.267 0.00886 Inf -39.812 <.0001 
+    ##  2 / 3    1.014 0.02202 Inf   0.657 0.7885 
     ## 
     ## Results are averaged over the levels of: B_QUARTER 
     ## P value adjustment: tukey method for comparing a family of 3 estimates 
@@ -1098,10 +909,10 @@ Least square means, Tukey adjusted
 
     ## $lsmeans
     ##  B_QUARTER response     SE  df asymp.LCL asymp.UCL
-    ##  1             1.76 0.0487 Inf      1.66      1.85
-    ##  2             1.55 0.0441 Inf      1.47      1.64
-    ##  3             1.70 0.0633 Inf      1.58      1.83
-    ##  4             1.63 0.0564 Inf      1.53      1.75
+    ##  1             1.82 0.0462 Inf      1.73      1.91
+    ##  2             1.70 0.0445 Inf      1.61      1.78
+    ##  3             1.87 0.0646 Inf      1.75      2.00
+    ##  4             1.81 0.0591 Inf      1.70      1.93
     ## 
     ## Results are averaged over the levels of: N_DEHORNINGS 
     ## Confidence level used: 0.95 
@@ -1109,16 +920,97 @@ Least square means, Tukey adjusted
     ## 
     ## $contrasts
     ##  contrast ratio     SE  df z.ratio p.value
-    ##  1 / 2    1.131 0.0333 Inf  4.165  0.0002 
-    ##  1 / 3    1.031 0.0388 Inf  0.800  0.8546 
-    ##  1 / 4    1.075 0.0386 Inf  2.012  0.1835 
-    ##  2 / 3    0.911 0.0337 Inf -2.509  0.0585 
-    ##  2 / 4    0.951 0.0330 Inf -1.455  0.4653 
-    ##  3 / 4    1.043 0.0446 Inf  0.987  0.7568 
+    ##  1 / 2    1.074 0.0318 Inf  2.397  0.0777 
+    ##  1 / 3    0.972 0.0367 Inf -0.749  0.8771 
+    ##  1 / 4    1.007 0.0362 Inf  0.194  0.9974 
+    ##  2 / 3    0.905 0.0335 Inf -2.683  0.0366 
+    ##  2 / 4    0.938 0.0323 Inf -1.861  0.2450 
+    ##  3 / 4    1.036 0.0443 Inf  0.826  0.8424 
     ## 
     ## Results are averaged over the levels of: N_DEHORNINGS 
     ## P value adjustment: tukey method for comparing a family of 4 estimates 
     ## Tests are performed on the log scale
+
+### Interaction trends
+
+    ## Generalized linear mixed model fit by maximum likelihood (Laplace
+    ##   Approximation) [glmerMod]
+    ##  Family: gaussian  ( log )
+    ## Formula: G_TOTAL ~ N_DEHORNINGS * CALC_AGE + B_QUARTER + (1 | ANIMAL)
+    ##    Data: df.cv.all
+    ## Control: glmerControl(optimizer = "bobyqa")
+    ## 
+    ##      AIC      BIC   logLik deviance df.resid 
+    ##   1994.8   2049.7   -986.4   1972.8     1075 
+    ## 
+    ## Scaled residuals: 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -3.8004 -0.3532 -0.0384  0.3357  3.9448 
+    ## 
+    ## Random effects:
+    ##  Groups   Name        Variance Std.Dev.
+    ##  ANIMAL   (Intercept) 0.1180   0.3436  
+    ##  Residual             0.2788   0.5281  
+    ## Number of obs: 1086, groups:  ANIMAL, 758
+    ## 
+    ## Fixed effects:
+    ##                          Estimate Std. Error t value Pr(>|z|)    
+    ## (Intercept)            -9.375e-02  3.486e-02  -2.689  0.00716 ** 
+    ## N_DEHORNINGS2           9.765e-01  3.974e-02  24.570  < 2e-16 ***
+    ## N_DEHORNINGS3           9.165e-01  4.566e-02  20.072  < 2e-16 ***
+    ## CALC_AGE               -1.233e-04  1.934e-05  -6.372 1.86e-10 ***
+    ## B_QUARTER2             -7.108e-02  2.965e-02  -2.397  0.01654 *  
+    ## B_QUARTER3              2.831e-02  3.779e-02   0.749  0.45385    
+    ## B_QUARTER4             -6.982e-03  3.596e-02  -0.194  0.84607    
+    ## N_DEHORNINGS2:CALC_AGE  2.296e-04  1.980e-05  11.599  < 2e-16 ***
+    ## N_DEHORNINGS3:CALC_AGE  2.591e-04  1.839e-05  14.088  < 2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Correlation of Fixed Effects:
+    ##                (Intr) N_DEHORNINGS2 N_DEHORNINGS3 CALC_A B_QUARTER2
+    ## N_DEHORNINGS2  -0.266                                              
+    ## N_DEHORNINGS3  -0.064  0.460                                       
+    ## CALC_AGE       -0.558 -0.032        -0.258                         
+    ## B_QUARTER2     -0.371 -0.032        -0.048        -0.009           
+    ## B_QUARTER3     -0.273  0.042         0.032        -0.086  0.418    
+    ## B_QUARTER4     -0.357  0.109         0.038        -0.045  0.463    
+    ## N_DEHORNINGS2:  0.224 -0.718        -0.109        -0.339  0.025    
+    ## N_DEHORNINGS3:  0.113 -0.170        -0.691        -0.208  0.002    
+    ##                B_QUARTER3 B_QUARTER4 N_DEHORNINGS2:
+    ## N_DEHORNINGS2                                      
+    ## N_DEHORNINGS3                                      
+    ## CALC_AGE                                           
+    ## B_QUARTER2                                         
+    ## B_QUARTER3                                         
+    ## B_QUARTER4      0.329                              
+    ## N_DEHORNINGS2: -0.046     -0.071                   
+    ## N_DEHORNINGS3: -0.012      0.047      0.240        
+    ## convergence code: 0
+    ## Model failed to converge with max|grad| = 180.845 (tol = 0.001, component 1)
+    ## Model is nearly unidentifiable: very large eigenvalue
+    ##  - Rescale variables?
+    ## Model is nearly unidentifiable: large eigenvalue ratio
+    ##  - Rescale variables?
+
+    ## $emtrends
+    ##  N_DEHORNINGS CALC_AGE.trend       SE  df asymp.LCL asymp.UCL
+    ##  1                 -0.000123 1.93e-05 Inf -1.61e-04 -8.53e-05
+    ##  2                  0.000106 2.25e-05 Inf  6.23e-05  1.51e-04
+    ##  3                  0.000136 2.38e-05 Inf  8.93e-05  1.82e-04
+    ## 
+    ## Results are averaged over the levels of: B_QUARTER 
+    ## Trends are based on the log (transformed) scale 
+    ## Confidence level used: 0.95 
+    ## 
+    ## $contrasts
+    ##  contrast  estimate       SE  df z.ratio p.value
+    ##  1 - 2    -2.30e-04 1.98e-05 Inf -11.599 <.0001 
+    ##  1 - 3    -2.59e-04 1.84e-05 Inf -14.088 <.0001 
+    ##  2 - 3    -2.94e-05 2.36e-05 Inf  -1.249 0.4242 
+    ## 
+    ## Results are averaged over the levels of: B_QUARTER 
+    ## P value adjustment: tukey method for comparing a family of 3 estimates
 
 Hypothesis 3 - Factors influencing the growth of the anterior horn weight in males and females
 ==============================================================================================
@@ -1166,7 +1058,7 @@ hist(log10(df.cv.all.f$G_AH_W),
      xlab ="")
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-31-1.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-32-1.png)
 
 Data transformations of continuous variables
 --------------------------------------------
@@ -1177,13 +1069,13 @@ df.cv.all.f$CALC_AGE_BC_STD <- scale(df.cv.all.f$CALC_AGE_BC)
 hist(df.cv.all.f$CALC_AGE)
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-32-1.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-33-1.png)
 
 ``` r
 hist(df.cv.all.f$CALC_AGE_BC_STD)
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-32-2.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-33-2.png)
 
 Model building
 --------------
@@ -1234,166 +1126,6 @@ anova(baselineGLMM, baselineGLM, test="Chisq")
 The GLMM performs better
 
 ### Univariate models
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_W ~ N_DEHORNINGS + (1 | ANIMAL)
-    ##    Data: df.cv.all.f
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##   1324.6   1349.6   -657.3   1314.6     1078 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -3.7564 -0.3632 -0.0182  0.4041  3.8441 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.09675  0.3110  
-    ##  Residual             0.18106  0.4255  
-    ## Number of obs: 1083, groups:  ANIMAL, 757
-    ## 
-    ## Fixed effects:
-    ##               Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)   -0.40927    0.02203  -18.58   <2e-16 ***
-    ## N_DEHORNINGS2  1.20394    0.02294   52.49   <2e-16 ***
-    ## N_DEHORNINGS3  1.26751    0.02522   50.26   <2e-16 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##               (Intr) N_DEHORNINGS2
-    ## N_DEHORNINGS2 -0.578              
-    ## N_DEHORNINGS3 -0.498  0.638
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_W ~ CALC_AGE_BC_STD + (1 | ANIMAL)
-    ##    Data: df.cv.all.f
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##   2840.3   2860.3  -1416.2   2832.3     1079 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -4.1196 -0.3802  0.0243  0.3879  6.6875 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.2762   0.5255  
-    ##  Residual             0.5403   0.7350  
-    ## Number of obs: 1083, groups:  ANIMAL, 757
-    ## 
-    ## Fixed effects:
-    ##                 Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)      0.22089    0.02951   7.485 7.16e-14 ***
-    ## CALC_AGE_BC_STD  0.50418    0.02510  20.091  < 2e-16 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##             (Intr)
-    ## CALC_AGE_BC -0.321
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_W ~ DH_QUARTER + (1 | ANIMAL)
-    ##    Data: df.cv.all.f
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##   3321.0   3351.0  -1654.5   3309.0     1077 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -3.6116 -0.5786 -0.2007  0.4880  4.3644 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.3159   0.5621  
-    ##  Residual             0.7939   0.8910  
-    ## Number of obs: 1083, groups:  ANIMAL, 757
-    ## 
-    ## Fixed effects:
-    ##             Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)  0.37369    0.05301   7.050 1.79e-12 ***
-    ## DH_QUARTER2 -0.05535    0.06378  -0.868   0.3855    
-    ## DH_QUARTER3 -0.03500    0.05884  -0.595   0.5520    
-    ## DH_QUARTER4 -0.10146    0.06069  -1.672   0.0945 .  
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##             (Intr) DH_QUARTER2 DH_QUARTER3
-    ## DH_QUARTER2 -0.715                        
-    ## DH_QUARTER3 -0.702  0.592                 
-    ## DH_QUARTER4 -0.726  0.612       0.606
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_W ~ B_QUARTER + (1 | ANIMAL)
-    ##    Data: df.cv.all.f
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##   3310.1   3340.0  -1649.0   3298.1     1077 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -3.5714 -0.5814 -0.1994  0.5018  4.4404 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.3162   0.5623  
-    ##  Residual             0.7869   0.8871  
-    ## Number of obs: 1083, groups:  ANIMAL, 757
-    ## 
-    ## Fixed effects:
-    ##              Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)  0.317646   0.041047   7.739 1.01e-14 ***
-    ## B_QUARTER2   0.008718   0.054825   0.159   0.8737    
-    ## B_QUARTER3   0.118875   0.063793   1.863   0.0624 .  
-    ## B_QUARTER4  -0.147686   0.065633  -2.250   0.0244 *  
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##            (Intr) B_QUARTER2 B_QUARTER3
-    ## B_QUARTER2 -0.592                      
-    ## B_QUARTER3 -0.534  0.413               
-    ## B_QUARTER4 -0.495  0.420      0.387
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_W ~ GENDER + (1 | ANIMAL)
-    ##    Data: df.cv.all.f
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##   3290.3   3310.3  -1641.2   3282.3     1079 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -3.5336 -0.5694 -0.2426  0.5201  4.4555 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.2919   0.5402  
-    ##  Residual             0.7913   0.8896  
-    ## Number of obs: 1083, groups:  ANIMAL, 757
-    ## 
-    ## Fixed effects:
-    ##             Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)  0.19520    0.03747   5.210 1.89e-07 ***
-    ## GENDERM      0.22970    0.04238   5.421 5.94e-08 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##         (Intr)
-    ## GENDERM -0.647
 
 ### Univariate model comparison
 
@@ -1581,7 +1313,7 @@ plot(effect("N_DEHORNINGS:CALC_AGE_BC_STD",
      xlab = "Age")
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-39-1.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-40-1.png)
 
 Next piece is used to show it on non transformed scale
 
@@ -1614,7 +1346,7 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
      xlab = "Age")
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-40-1.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-41-1.png)
 
 ### Least square means
 
@@ -1622,9 +1354,9 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
 
     ## $lsmeans
     ##  N_DEHORNINGS response     SE  df asymp.LCL asymp.UCL
-    ##  1                0.64 0.0153 Inf      0.61      0.67
-    ##  2                2.08 0.0479 Inf      1.98      2.17
-    ##  3                2.03 0.0735 Inf      1.89      2.18
+    ##  1               0.642 0.0150 Inf     0.613     0.672
+    ##  2               2.227 0.0467 Inf     2.137     2.320
+    ##  3               2.247 0.0575 Inf     2.137     2.363
     ## 
     ## Results are averaged over the levels of: B_QUARTER 
     ## Confidence level used: 0.95 
@@ -1632,9 +1364,9 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
     ## 
     ## $contrasts
     ##  contrast ratio      SE  df z.ratio p.value
-    ##  1 / 2    0.308 0.00829 Inf -43.767 <.0001 
-    ##  1 / 3    0.315 0.01219 Inf -29.860 <.0001 
-    ##  2 / 3    1.023 0.02993 Inf   0.771 0.7209 
+    ##  1 / 2    0.288 0.00721 Inf -49.754 <.0001 
+    ##  1 / 3    0.286 0.00861 Inf -41.560 <.0001 
+    ##  2 / 3    0.991 0.02086 Inf  -0.433 0.9020 
     ## 
     ## Results are averaged over the levels of: B_QUARTER 
     ## P value adjustment: tukey method for comparing a family of 3 estimates 
@@ -1642,10 +1374,10 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
 
     ## $lsmeans
     ##  B_QUARTER response     SE  df asymp.LCL asymp.UCL
-    ##  1             1.45 0.0374 Inf      1.38      1.53
-    ##  2             1.33 0.0354 Inf      1.26      1.40
-    ##  3             1.42 0.0491 Inf      1.33      1.52
-    ##  4             1.37 0.0443 Inf      1.29      1.46
+    ##  1             1.49 0.0349 Inf      1.43      1.56
+    ##  2             1.40 0.0340 Inf      1.34      1.47
+    ##  3             1.51 0.0481 Inf      1.42      1.61
+    ##  4             1.50 0.0450 Inf      1.41      1.59
     ## 
     ## Results are averaged over the levels of: N_DEHORNINGS 
     ## Confidence level used: 0.95 
@@ -1653,16 +1385,97 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
     ## 
     ## $contrasts
     ##  contrast ratio     SE  df z.ratio p.value
-    ##  1 / 2    1.090 0.0305 Inf  3.075  0.0113 
-    ##  1 / 3    1.023 0.0360 Inf  0.641  0.9187 
-    ##  1 / 4    1.058 0.0354 Inf  1.678  0.3355 
-    ##  2 / 3    0.939 0.0328 Inf -1.816  0.2657 
-    ##  2 / 4    0.971 0.0319 Inf -0.906  0.8018 
-    ##  3 / 4    1.034 0.0413 Inf  0.843  0.8338 
+    ##  1 / 2    1.063 0.0296 Inf  2.208  0.1211 
+    ##  1 / 3    0.990 0.0348 Inf -0.295  0.9911 
+    ##  1 / 4    0.997 0.0332 Inf -0.085  0.9998 
+    ##  2 / 3    0.931 0.0325 Inf -2.059  0.1668 
+    ##  2 / 4    0.938 0.0303 Inf -1.988  0.1924 
+    ##  3 / 4    1.008 0.0400 Inf  0.190  0.9976 
     ## 
     ## Results are averaged over the levels of: N_DEHORNINGS 
     ## P value adjustment: tukey method for comparing a family of 4 estimates 
     ## Tests are performed on the log scale
+
+### Interaction estimates
+
+    ## Generalized linear mixed model fit by maximum likelihood (Laplace
+    ##   Approximation) [glmerMod]
+    ##  Family: gaussian  ( log )
+    ## Formula: G_AH_W ~ N_DEHORNINGS * CALC_AGE + B_QUARTER + (1 | ANIMAL)
+    ##    Data: df.cv.all.f
+    ## Control: glmerControl(optimizer = "bobyqa")
+    ## 
+    ##      AIC      BIC   logLik deviance df.resid 
+    ##   1261.1   1315.9   -619.5   1239.1     1072 
+    ## 
+    ## Scaled residuals: 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -4.0580 -0.3866 -0.0252  0.3614  4.0183 
+    ## 
+    ## Random effects:
+    ##  Groups   Name        Variance Std.Dev.
+    ##  ANIMAL   (Intercept) 0.09338  0.3056  
+    ##  Residual             0.16538  0.4067  
+    ## Number of obs: 1083, groups:  ANIMAL, 757
+    ## 
+    ## Fixed effects:
+    ##                          Estimate Std. Error t value Pr(>|z|)    
+    ## (Intercept)            -1.457e-01  3.053e-02  -4.772 1.82e-06 ***
+    ## N_DEHORNINGS2           8.517e-01  3.527e-02  24.152  < 2e-16 ***
+    ## N_DEHORNINGS3           8.197e-01  4.283e-02  19.138  < 2e-16 ***
+    ## CALC_AGE               -1.839e-04  1.700e-05 -10.817  < 2e-16 ***
+    ## B_QUARTER2             -6.147e-02  2.784e-02  -2.208   0.0273 *  
+    ## B_QUARTER3              1.036e-02  3.513e-02   0.295   0.7681    
+    ## B_QUARTER4              2.827e-03  3.325e-02   0.085   0.9322    
+    ## N_DEHORNINGS2:CALC_AGE  2.525e-04  1.772e-05  14.253  < 2e-16 ***
+    ## N_DEHORNINGS3:CALC_AGE  2.790e-04  1.776e-05  15.712  < 2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Correlation of Fixed Effects:
+    ##                (Intr) N_DEHORNINGS2 N_DEHORNINGS3 CALC_A B_QUARTER2
+    ## N_DEHORNINGS2  -0.253                                              
+    ## N_DEHORNINGS3  -0.057  0.419                                       
+    ## CALC_AGE       -0.522 -0.055        -0.254                         
+    ## B_QUARTER2     -0.402 -0.023        -0.051        -0.003           
+    ## B_QUARTER3     -0.294  0.040         0.024        -0.084  0.405    
+    ## B_QUARTER4     -0.377  0.117         0.041        -0.052  0.451    
+    ## N_DEHORNINGS2:  0.208 -0.709        -0.088        -0.326  0.020    
+    ## N_DEHORNINGS3:  0.093 -0.141        -0.714        -0.181  0.000    
+    ##                B_QUARTER3 B_QUARTER4 N_DEHORNINGS2:
+    ## N_DEHORNINGS2                                      
+    ## N_DEHORNINGS3                                      
+    ## CALC_AGE                                           
+    ## B_QUARTER2                                         
+    ## B_QUARTER3                                         
+    ## B_QUARTER4      0.328                              
+    ## N_DEHORNINGS2: -0.043     -0.071                   
+    ## N_DEHORNINGS3: -0.012      0.036      0.201        
+    ## convergence code: 0
+    ## Model failed to converge with max|grad| = 168.364 (tol = 0.001, component 1)
+    ## Model is nearly unidentifiable: very large eigenvalue
+    ##  - Rescale variables?
+    ## Model is nearly unidentifiable: large eigenvalue ratio
+    ##  - Rescale variables?
+
+    ## $emtrends
+    ##  N_DEHORNINGS CALC_AGE.trend       SE  df asymp.LCL asymp.UCL
+    ##  1                 -1.84e-04 1.70e-05 Inf -2.17e-04 -0.000151
+    ##  2                  6.86e-05 2.02e-05 Inf  2.91e-05  0.000108
+    ##  3                  9.52e-05 2.23e-05 Inf  5.15e-05  0.000139
+    ## 
+    ## Results are averaged over the levels of: B_QUARTER 
+    ## Trends are based on the log (transformed) scale 
+    ## Confidence level used: 0.95 
+    ## 
+    ## $contrasts
+    ##  contrast  estimate       SE  df z.ratio p.value
+    ##  1 - 2    -2.53e-04 1.77e-05 Inf -14.253 <.0001 
+    ##  1 - 3    -2.79e-04 1.78e-05 Inf -15.712 <.0001 
+    ##  2 - 3    -2.65e-05 2.24e-05 Inf  -1.182 0.4640 
+    ## 
+    ## Results are averaged over the levels of: B_QUARTER 
+    ## P value adjustment: tukey method for comparing a family of 3 estimates
 
 Hypothesis 4 - Factors influencing the growth of the anterior horn length in males and females
 ==============================================================================================
@@ -1710,7 +1523,7 @@ hist(log10(df.cv.all.f.l$G_AH_L),
      xlab ="")
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-42-1.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-44-1.png)
 
 Data transformations of continuous variables
 --------------------------------------------
@@ -1721,13 +1534,13 @@ df.cv.all.f.l$CALC_AGE_BC_STD <- scale(df.cv.all.f.l$CALC_AGE_BC)
 hist(df.cv.all.f.l$CALC_AGE)
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-43-1.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-45-1.png)
 
 ``` r
 hist(df.cv.all.f.l$CALC_AGE_BC_STD)
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-43-2.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-45-2.png)
 
 Model building
 --------------
@@ -1778,171 +1591,6 @@ anova(baselineGLMM, baselineGLM, test="Chisq")
 The GLMM performs better
 
 ### Univariate models
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_L ~ N_DEHORNINGS + (1 | ANIMAL)
-    ##    Data: df.cv.all.f.l
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##  -2796.4  -2771.5   1403.2  -2806.4     1073 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -2.9801 -0.3589  0.0781  0.4286  4.5751 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.061282 0.24755 
-    ##  Residual             0.004355 0.06599 
-    ## Number of obs: 1078, groups:  ANIMAL, 754
-    ## 
-    ## Fixed effects:
-    ##               Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)   -1.67218    0.01791  -93.38   <2e-16 ***
-    ## N_DEHORNINGS2  0.27821    0.02055   13.54   <2e-16 ***
-    ## N_DEHORNINGS3  0.27757    0.02624   10.58   <2e-16 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##               (Intr) N_DEHORNINGS2
-    ## N_DEHORNINGS2 -0.461              
-    ## N_DEHORNINGS3 -0.397  0.340
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_L ~ CALC_AGE_BC_STD + (1 | ANIMAL)
-    ##    Data: df.cv.all.f.l
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##  -2639.2  -2619.2   1323.6  -2647.2     1074 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -2.6997 -0.3709  0.0663  0.5033  4.4159 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.068798 0.26229 
-    ##  Residual             0.005047 0.07105 
-    ## Number of obs: 1078, groups:  ANIMAL, 754
-    ## 
-    ## Fixed effects:
-    ##                 Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)     -1.53743    0.01620 -94.893  < 2e-16 ***
-    ## CALC_AGE_BC_STD -0.07847    0.01111  -7.064 1.62e-12 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##             (Intr)
-    ## CALC_AGE_BC 0.013
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_L ~ DH_QUARTER + (1 | ANIMAL)
-    ##    Data: df.cv.all.f.l
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##  -2592.7  -2562.8   1302.3  -2604.7     1072 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -2.9303 -0.3159  0.1008  0.4499  4.0623 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.07399  0.27202 
-    ##  Residual             0.00524  0.07239 
-    ## Number of obs: 1078, groups:  ANIMAL, 754
-    ## 
-    ## Fixed effects:
-    ##             Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept) -1.48890    0.02996 -49.696   <2e-16 ***
-    ## DH_QUARTER2 -0.05853    0.03470  -1.687   0.0917 .  
-    ## DH_QUARTER3 -0.07433    0.03392  -2.191   0.0285 *  
-    ## DH_QUARTER4 -0.04688    0.03287  -1.426   0.1538    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##             (Intr) DH_QUARTER2 DH_QUARTER3
-    ## DH_QUARTER2 -0.709                        
-    ## DH_QUARTER3 -0.694  0.590                 
-    ## DH_QUARTER4 -0.733  0.627       0.607
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_L ~ B_QUARTER + (1 | ANIMAL)
-    ##    Data: df.cv.all.f.l
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##  -2597.8  -2567.9   1304.9  -2609.8     1072 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -2.8779 -0.3125  0.0943  0.4529  3.8756 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.07552  0.27482 
-    ##  Residual             0.00520  0.07211 
-    ## Number of obs: 1078, groups:  ANIMAL, 754
-    ## 
-    ## Fixed effects:
-    ##             Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept) -1.49761    0.02295 -65.266  < 2e-16 ***
-    ## B_QUARTER2  -0.03852    0.02983  -1.291  0.19659    
-    ## B_QUARTER3  -0.07732    0.03573  -2.164  0.03045 *  
-    ## B_QUARTER4  -0.10285    0.03502  -2.937  0.00331 ** 
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##            (Intr) B_QUARTER2 B_QUARTER3
-    ## B_QUARTER2 -0.567                      
-    ## B_QUARTER3 -0.485  0.374               
-    ## B_QUARTER4 -0.503  0.427      0.348
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_L ~ GENDER + (1 | ANIMAL)
-    ##    Data: df.cv.all.f.l
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##  -2596.2  -2576.3   1302.1  -2604.2     1074 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -2.9091 -0.3122  0.0972  0.4537  4.0801 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.074198 0.27239 
-    ##  Residual             0.005235 0.07236 
-    ## Number of obs: 1078, groups:  ANIMAL, 754
-    ## 
-    ## Fixed effects:
-    ##             Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept) -1.56622    0.02104 -74.454   <2e-16 ***
-    ## GENDERM      0.04933    0.02311   2.134   0.0328 *  
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##         (Intr)
-    ## GENDERM -0.604
 
 ### Univariate model comparison
 
@@ -2022,11 +1670,15 @@ The GLMM performs better
     ## B_QUARTER3              
     ## B_QUARTER4     0.347
 
-    ## Analysis of Variance Table
-    ##                 Df  Sum Sq Mean Sq  F value
-    ## N_DEHORNINGS     2 0.54864 0.27432 100.2633
-    ## CALC_AGE_BC_STD  1 1.44709 1.44709 528.9116
-    ## B_QUARTER        3 0.01224 0.00408   1.4911
+    ## Analysis of Deviance Table (Type II Wald chisquare tests)
+    ## 
+    ## Response: G_AH_L
+    ##                    Chisq Df Pr(>Chisq)    
+    ## N_DEHORNINGS    919.9907  2     <2e-16 ***
+    ## CALC_AGE_BC_STD 645.2374  1     <2e-16 ***
+    ## B_QUARTER         5.1201  3     0.1632    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Final model selection
 ---------------------
@@ -2036,7 +1688,6 @@ Final model selection
 ``` r
 summary(glmer8 <- glmer(G_AH_L~ 
                         N_DEHORNINGS*CALC_AGE_BC_STD + 
-                        B_QUARTER + 
                         (1|ANIMAL), 
                       df.cv.all.f.l, 
                       family = gaussian(link="log"),
@@ -2047,57 +1698,41 @@ summary(glmer8 <- glmer(G_AH_L~
     ## Generalized linear mixed model fit by maximum likelihood (Laplace
     ##   Approximation) [glmerMod]
     ##  Family: gaussian  ( log )
-    ## Formula: 
-    ## G_AH_L ~ N_DEHORNINGS * CALC_AGE_BC_STD + B_QUARTER + (1 | ANIMAL)
+    ## Formula: G_AH_L ~ N_DEHORNINGS * CALC_AGE_BC_STD + (1 | ANIMAL)
     ##    Data: df.cv.all.f.l
     ## Control: glmerControl(optimizer = "bobyqa")
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##  -3452.8  -3398.0   1737.4  -3474.8     1067 
+    ##  -3452.8  -3412.9   1734.4  -3468.8     1070 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -2.9263 -0.4462  0.0033  0.3957  4.0012 
+    ## -3.0259 -0.4425  0.0036  0.3939  4.2335 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.037195 0.19286 
-    ##  Residual             0.002637 0.05135 
+    ##  ANIMAL   (Intercept) 0.036656 0.19146 
+    ##  Residual             0.002655 0.05153 
     ## Number of obs: 1078, groups:  ANIMAL, 754
     ## 
     ## Fixed effects:
-    ##                               Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)                   -1.84761    0.01953 -94.612  < 2e-16 ***
-    ## N_DEHORNINGS2                  0.54292    0.01940  27.982  < 2e-16 ***
-    ## N_DEHORNINGS3                  0.58669    0.03505  16.739  < 2e-16 ***
-    ## CALC_AGE_BC_STD               -0.33871    0.01266 -26.752  < 2e-16 ***
-    ## B_QUARTER2                    -0.03889    0.02025  -1.921   0.0548 .  
-    ## B_QUARTER3                    -0.02561    0.02481  -1.032   0.3020    
-    ## B_QUARTER4                    -0.05248    0.02393  -2.193   0.0283 *  
-    ## N_DEHORNINGS2:CALC_AGE_BC_STD  0.20617    0.02305   8.943  < 2e-16 ***
-    ## N_DEHORNINGS3:CALC_AGE_BC_STD  0.21721    0.03553   6.113 9.75e-10 ***
+    ##                               Estimate Std. Error  t value Pr(>|z|)    
+    ## (Intercept)                   -1.87299    0.01615 -115.983  < 2e-16 ***
+    ## N_DEHORNINGS2                  0.54605    0.01940   28.152  < 2e-16 ***
+    ## N_DEHORNINGS3                  0.58851    0.03491   16.856  < 2e-16 ***
+    ## CALC_AGE_BC_STD               -0.33937    0.01263  -26.868  < 2e-16 ***
+    ## N_DEHORNINGS2:CALC_AGE_BC_STD  0.20409    0.02301    8.870  < 2e-16 ***
+    ## N_DEHORNINGS3:CALC_AGE_BC_STD  0.21704    0.03545    6.122 9.24e-10 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
     ## Correlation of Fixed Effects:
-    ##                (Intr) N_DEHORNINGS2 N_DEHORNINGS3 CALC_A B_QUARTER2
-    ## N_DEHORNINGS2  -0.539                                              
-    ## N_DEHORNINGS3  -0.296  0.421                                       
-    ## CALC_AGE_BC     0.493 -0.537        -0.306                         
-    ## B_QUARTER2     -0.452  0.014        -0.041        -0.022           
-    ## B_QUARTER3     -0.401  0.059         0.063        -0.073  0.361    
-    ## B_QUARTER4     -0.438  0.080         0.055        -0.008  0.428    
-    ## N_DEHORNINGS2: -0.219 -0.011        -0.026        -0.441  0.008    
-    ## N_DEHORNINGS3: -0.146  0.049        -0.646        -0.288  0.017    
-    ##                B_QUARTER3 B_QUARTER4 N_DEHORNINGS2:
-    ## N_DEHORNINGS2                                      
-    ## N_DEHORNINGS3                                      
-    ## CALC_AGE_BC                                        
-    ## B_QUARTER2                                         
-    ## B_QUARTER3                                         
-    ## B_QUARTER4      0.345                              
-    ## N_DEHORNINGS2: -0.046     -0.063                   
-    ## N_DEHORNINGS3: -0.067     -0.014      0.295
+    ##                (Intr) N_DEHORNINGS2 N_DEHORNINGS3 CALC_A N_DEHORNINGS2:
+    ## N_DEHORNINGS2  -0.614                                                  
+    ## N_DEHORNINGS3  -0.343  0.417                                           
+    ## CALC_AGE_BC     0.572 -0.538        -0.305                             
+    ## N_DEHORNINGS2: -0.295 -0.002        -0.016        -0.449               
+    ## N_DEHORNINGS3: -0.193  0.055        -0.645        -0.295  0.292
 
 ``` r
 Anova(glmer8, test = "Chisq")
@@ -2106,11 +1741,10 @@ Anova(glmer8, test = "Chisq")
     ## Analysis of Deviance Table (Type II Wald chisquare tests)
     ## 
     ## Response: G_AH_L
-    ##                                 Chisq Df Pr(>Chisq)    
-    ## N_DEHORNINGS                 907.0019  2     <2e-16 ***
-    ## CALC_AGE_BC_STD              633.7067  1     <2e-16 ***
-    ## B_QUARTER                      5.9886  3     0.1122    
-    ## N_DEHORNINGS:CALC_AGE_BC_STD  93.1985  2     <2e-16 ***
+    ##                                Chisq Df Pr(>Chisq)    
+    ## N_DEHORNINGS                 914.893  2  < 2.2e-16 ***
+    ## CALC_AGE_BC_STD              643.858  1  < 2.2e-16 ***
+    ## N_DEHORNINGS:CALC_AGE_BC_STD  92.329  2  < 2.2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -2123,14 +1757,13 @@ plot(effect("N_DEHORNINGS:CALC_AGE_BC_STD",
      ylab = "Total growth in length (g/day)")
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-50-1.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-52-1.png)
 
 Next piece is used to show it on non transformed scale
 
 ``` r
 glmer8b <- glmer(G_AH_L~ 
                         N_DEHORNINGS*CALC_AGE + 
-                        B_QUARTER + 
                         (1|ANIMAL), 
                       df.cv.all.f.l, 
                       family = gaussian(link="log"),
@@ -2139,7 +1772,7 @@ glmer8b <- glmer(G_AH_L~
 ```
 
     ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl =
-    ## control$checkConv, : Model failed to converge with max|grad| = 280.452 (tol
+    ## control$checkConv, : Model failed to converge with max|grad| = 276.962 (tol
     ## = 0.001, component 1)
 
     ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
@@ -2156,55 +1789,82 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
      ylab = "Total growth in length (g/day)")
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-51-1.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-53-1.png)
 
 ### Least square means
 
-    ## NOTE: Results may be misleading due to involvement in interactions
-
-    ## $lsmeans
+    ## CALC_AGE = 1558:
     ##  N_DEHORNINGS response      SE  df asymp.LCL asymp.UCL
-    ##  1               0.153 0.00250 Inf     0.148     0.158
-    ##  2               0.263 0.00433 Inf     0.255     0.272
-    ##  3               0.275 0.00923 Inf     0.258     0.294
+    ##  1               0.141 0.00208 Inf     0.137     0.145
+    ##  2               0.267 0.00376 Inf     0.260     0.274
+    ##  3               0.277 0.00499 Inf     0.267     0.287
     ## 
-    ## Results are averaged over the levels of: B_QUARTER 
     ## Confidence level used: 0.95 
-    ## Intervals are back-transformed from the log scale 
-    ## 
-    ## $contrasts
-    ##  contrast ratio     SE  df z.ratio p.value
-    ##  1 / 2    0.581 0.0113 Inf -27.982 <.0001 
-    ##  1 / 3    0.556 0.0195 Inf -16.739 <.0001 
-    ##  2 / 3    0.957 0.0308 Inf  -1.362 0.3608 
-    ## 
-    ## Results are averaged over the levels of: B_QUARTER 
-    ## P value adjustment: tukey method for comparing a family of 3 estimates 
-    ## Tests are performed on the log scale
+    ## Intervals are back-transformed from the log scale
 
-    ## $lsmeans
-    ##  B_QUARTER response      SE  df asymp.LCL asymp.UCL
-    ##  1            0.230 0.00431 Inf     0.221     0.238
-    ##  2            0.221 0.00436 Inf     0.213     0.230
-    ##  3            0.224 0.00564 Inf     0.213     0.235
-    ##  4            0.218 0.00521 Inf     0.208     0.228
+### Interaction estimates
+
+    ## Generalized linear mixed model fit by maximum likelihood (Laplace
+    ##   Approximation) [glmerMod]
+    ##  Family: gaussian  ( log )
+    ## Formula: G_AH_L ~ N_DEHORNINGS * CALC_AGE + (1 | ANIMAL)
+    ##    Data: df.cv.all.f.l
+    ## Control: glmerControl(optimizer = "bobyqa")
     ## 
-    ## Results are averaged over the levels of: N_DEHORNINGS 
+    ##      AIC      BIC   logLik deviance df.resid 
+    ##  -3564.6  -3524.7   1790.3  -3580.6     1070 
+    ## 
+    ## Scaled residuals: 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -3.3665 -0.4290 -0.0377  0.3463  4.4883 
+    ## 
+    ## Random effects:
+    ##  Groups   Name        Variance Std.Dev.
+    ##  ANIMAL   (Intercept) 0.034444 0.18559 
+    ##  Residual             0.002383 0.04881 
+    ## Number of obs: 1078, groups:  ANIMAL, 754
+    ## 
+    ## Fixed effects:
+    ##                          Estimate Std. Error t value Pr(>|z|)    
+    ## (Intercept)            -9.714e-01  1.463e-02 -66.377  < 2e-16 ***
+    ## N_DEHORNINGS2          -4.710e-02  2.269e-02  -2.076  0.03789 *  
+    ## N_DEHORNINGS3          -9.611e-02  3.262e-02  -2.946  0.00322 ** 
+    ## CALC_AGE               -6.340e-04  9.693e-06 -65.407  < 2e-16 ***
+    ## N_DEHORNINGS2:CALC_AGE  4.401e-04  1.290e-05  34.120  < 2e-16 ***
+    ## N_DEHORNINGS3:CALC_AGE  4.946e-04  1.473e-05  33.575  < 2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Correlation of Fixed Effects:
+    ##                (Intr) N_DEHORNINGS2 N_DEHORNINGS3 CALC_A N_DEHORNINGS2:
+    ## N_DEHORNINGS2  -0.211                                                  
+    ## N_DEHORNINGS3  -0.104  0.193                                           
+    ## CALC_AGE       -0.508 -0.078        -0.168                             
+    ## N_DEHORNINGS2:  0.081 -0.727        -0.008        -0.213               
+    ## N_DEHORNINGS3:  0.048 -0.035        -0.773        -0.136  0.069        
+    ## convergence code: 0
+    ## Model failed to converge with max|grad| = 276.962 (tol = 0.001, component 1)
+    ## Model is nearly unidentifiable: very large eigenvalue
+    ##  - Rescale variables?
+    ## Model is nearly unidentifiable: large eigenvalue ratio
+    ##  - Rescale variables?
+
+    ## $emtrends
+    ##  N_DEHORNINGS CALC_AGE.trend       SE  df asymp.LCL asymp.UCL
+    ##  1                 -0.000634 9.69e-06 Inf -0.000653 -0.000615
+    ##  2                 -0.000194 1.44e-05 Inf -0.000222 -0.000166
+    ##  3                 -0.000139 1.65e-05 Inf -0.000172 -0.000107
+    ## 
+    ## Trends are based on the log (transformed) scale 
     ## Confidence level used: 0.95 
-    ## Intervals are back-transformed from the log scale 
     ## 
     ## $contrasts
-    ##  contrast ratio     SE  df z.ratio p.value
-    ##  1 / 2    1.040 0.0211 Inf  1.921  0.2193 
-    ##  1 / 3    1.026 0.0255 Inf  1.032  0.7305 
-    ##  1 / 4    1.054 0.0252 Inf  2.193  0.1251 
-    ##  2 / 3    0.987 0.0254 Inf -0.516  0.9553 
-    ##  2 / 4    1.014 0.0241 Inf  0.570  0.9409 
-    ##  3 / 4    1.027 0.0287 Inf  0.963  0.7703 
+    ##  contrast  estimate       SE  df z.ratio p.value
+    ##  1 - 2    -4.40e-04 1.29e-05 Inf -34.120 <.0001 
+    ##  1 - 3    -4.95e-04 1.47e-05 Inf -33.575 <.0001 
+    ##  2 - 3    -5.46e-05 1.89e-05 Inf  -2.887 0.0109 
     ## 
-    ## Results are averaged over the levels of: N_DEHORNINGS 
-    ## P value adjustment: tukey method for comparing a family of 4 estimates 
-    ## Tests are performed on the log scale
+    ## P value adjustment: tukey method for comparing a family of 3 estimates
 
 Hypothesis 5 - Factors influencing the growth of the anterior horn circumference (mm/day) in males and females
 ==============================================================================================================
@@ -2252,7 +1912,7 @@ hist(log10(df.cv.all.f.c$G_AH_C),
      xlab ="")
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-53-1.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-56-1.png)
 
 Data transformations of continuous variables
 --------------------------------------------
@@ -2263,13 +1923,13 @@ df.cv.all.f.c$CALC_AGE_BC_STD <- scale(df.cv.all.f.c$CALC_AGE_BC)
 hist(df.cv.all.f.c$CALC_AGE)
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-54-1.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-57-1.png)
 
 ``` r
 hist(df.cv.all.f.c$CALC_AGE_BC_STD)
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-54-2.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-57-2.png)
 
 Model building
 --------------
@@ -2321,181 +1981,12 @@ The GLMM performs better
 
 ### Univariate models
 
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_C ~ N_DEHORNINGS + (1 | ANIMAL)
-    ##    Data: df.cv.all.f.c
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##     -7.7     17.2      8.8    -17.7     1055 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -2.9547 -0.4409 -0.0251  0.4159  4.2291 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.07189  0.2681  
-    ##  Residual             0.05719  0.2391  
-    ## Number of obs: 1060, groups:  ANIMAL, 746
-    ## 
-    ## Fixed effects:
-    ##               Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)   -0.78872    0.02147  -36.74   <2e-16 ***
-    ## N_DEHORNINGS2  0.81163    0.02361   34.37   <2e-16 ***
-    ## N_DEHORNINGS3  0.85725    0.02833   30.26   <2e-16 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##               (Intr) N_DEHORNINGS2
-    ## N_DEHORNINGS2 -0.584              
-    ## N_DEHORNINGS3 -0.507  0.511
-
     ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl =
     ## control$checkConv, : Model failed to converge with max|grad| = 0.0744355
     ## (tol = 0.001, component 1)
 
     ## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
     ##  - Rescale variables?
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_C ~ CALC_AGE_BC_STD + (1 | ANIMAL)
-    ##    Data: df.cv.all.f.c
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##    940.6    960.5   -466.3    932.6     1056 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -2.1209 -0.4473  0.0162  0.4082  3.3294 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.1505   0.3879  
-    ##  Residual             0.1316   0.3627  
-    ## Number of obs: 1060, groups:  ANIMAL, 746
-    ## 
-    ## Fixed effects:
-    ##                   Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept)     -0.3535347  0.0009767  -362.0   <2e-16 ***
-    ## CALC_AGE_BC_STD  0.1430517  0.0009758   146.6   <2e-16 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##             (Intr)
-    ## CALC_AGE_BC 0.000 
-    ## convergence code: 0
-    ## Model failed to converge with max|grad| = 0.0744355 (tol = 0.001, component 1)
-    ## Model is nearly unidentifiable: very large eigenvalue
-    ##  - Rescale variables?
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_C ~ DH_QUARTER + (1 | ANIMAL)
-    ##    Data: df.cv.all.f.c
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##    989.1   1018.9   -488.6    977.1     1054 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -2.2026 -0.5187 -0.0463  0.4834  3.6231 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.1569   0.3961  
-    ##  Residual             0.1363   0.3692  
-    ## Number of obs: 1060, groups:  ANIMAL, 746
-    ## 
-    ## Fixed effects:
-    ##             Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept) -0.22783    0.04534  -5.025 5.03e-07 ***
-    ## DH_QUARTER2 -0.09287    0.05337  -1.740 0.081827 .  
-    ## DH_QUARTER3 -0.18599    0.05318  -3.497 0.000470 ***
-    ## DH_QUARTER4 -0.18078    0.05203  -3.474 0.000512 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##             (Intr) DH_QUARTER2 DH_QUARTER3
-    ## DH_QUARTER2 -0.722                        
-    ## DH_QUARTER3 -0.691  0.618                 
-    ## DH_QUARTER4 -0.733  0.632       0.622
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_C ~ B_QUARTER + (1 | ANIMAL)
-    ##    Data: df.cv.all.f.c
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##    997.4   1027.2   -492.7    985.4     1054 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -2.1630 -0.5193 -0.0610  0.5175  3.3059 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.1547   0.3933  
-    ##  Residual             0.1379   0.3714  
-    ## Number of obs: 1060, groups:  ANIMAL, 746
-    ## 
-    ## Fixed effects:
-    ##              Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept) -0.325903   0.034288  -9.505   <2e-16 ***
-    ## B_QUARTER2  -0.007934   0.044990  -0.176   0.8600    
-    ## B_QUARTER3  -0.016466   0.054621  -0.301   0.7631    
-    ## B_QUARTER4  -0.143167   0.053896  -2.656   0.0079 ** 
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##            (Intr) B_QUARTER2 B_QUARTER3
-    ## B_QUARTER2 -0.573                      
-    ## B_QUARTER3 -0.480  0.390               
-    ## B_QUARTER4 -0.487  0.416      0.343
-
-    ## Generalized linear mixed model fit by maximum likelihood (Laplace
-    ##   Approximation) [glmerMod]
-    ##  Family: gaussian  ( log )
-    ## Formula: G_AH_C ~ GENDER + (1 | ANIMAL)
-    ##    Data: df.cv.all.f.c
-    ## Control: glmerControl(optimizer = "bobyqa")
-    ## 
-    ##      AIC      BIC   logLik deviance df.resid 
-    ##    991.7   1011.5   -491.8    983.7     1056 
-    ## 
-    ## Scaled residuals: 
-    ##     Min      1Q  Median      3Q     Max 
-    ## -2.1568 -0.5331 -0.0751  0.4996  3.3083 
-    ## 
-    ## Random effects:
-    ##  Groups   Name        Variance Std.Dev.
-    ##  ANIMAL   (Intercept) 0.1477   0.3843  
-    ##  Residual             0.1381   0.3716  
-    ## Number of obs: 1060, groups:  ANIMAL, 746
-    ## 
-    ## Fixed effects:
-    ##             Estimate Std. Error t value Pr(>|z|)    
-    ## (Intercept) -0.41412    0.03159 -13.109  < 2e-16 ***
-    ## GENDERM      0.11380    0.03587   3.173  0.00151 ** 
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Correlation of Fixed Effects:
-    ##         (Intr)
-    ## GENDERM -0.612
 
 ### Univariate model comparison
 
@@ -2644,7 +2135,7 @@ plot(effect("N_DEHORNINGS:CALC_AGE_BC_STD",
             xlab = "Age")
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-61-1.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-64-1.png)
 
 Next piece is used to show it on non transformed scale
 
@@ -2677,7 +2168,7 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
             xlab = "Age")
 ```
 
-![](Review_files/figure-markdown_github/unnamed-chunk-62-1.png)
+![](Review_files/figure-markdown_github/unnamed-chunk-65-1.png)
 
 ### Least square means
 
@@ -2685,18 +2176,101 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
 
     ## $lsmeans
     ##  N_DEHORNINGS response      SE  df asymp.LCL asymp.UCL
-    ##  1               0.346 0.00796 Inf     0.331     0.362
-    ##  2               1.044 0.01913 Inf     1.007     1.082
-    ##  3               1.337 0.04690 Inf     1.248     1.432
+    ##  1               0.298 0.00633 Inf     0.285      0.31
+    ##  2               1.066 0.01891 Inf     1.029      1.10
+    ##  3               1.214 0.02738 Inf     1.161      1.27
     ## 
+    ## Results are averaged over the levels of: B_QUARTER 
     ## Confidence level used: 0.95 
     ## Intervals are back-transformed from the log scale 
     ## 
     ## $contrasts
     ##  contrast ratio      SE  df z.ratio p.value
-    ##  1 / 2    0.332 0.00841 Inf -43.525 <.0001 
-    ##  1 / 3    0.259 0.01027 Inf -34.073 <.0001 
-    ##  2 / 3    0.780 0.02528 Inf  -7.651 <.0001 
+    ##  1 / 2    0.279 0.00612 Inf -58.211 <.0001 
+    ##  1 / 3    0.245 0.00684 Inf -50.390 <.0001 
+    ##  2 / 3    0.878 0.01905 Inf  -6.001 <.0001 
     ## 
+    ## Results are averaged over the levels of: B_QUARTER 
     ## P value adjustment: tukey method for comparing a family of 3 estimates 
     ## Tests are performed on the log scale
+
+### Interaction estimates
+
+    ## Generalized linear mixed model fit by maximum likelihood (Laplace
+    ##   Approximation) [glmerMod]
+    ##  Family: gaussian  ( log )
+    ## Formula: G_AH_C ~ N_DEHORNINGS * CALC_AGE + B_QUARTER + (1 | ANIMAL)
+    ##    Data: df.cv.all.f.c
+    ## Control: glmerControl(optimizer = "bobyqa")
+    ## 
+    ##      AIC      BIC   logLik deviance df.resid 
+    ##   -473.3   -418.7    247.7   -495.3     1049 
+    ## 
+    ## Scaled residuals: 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -3.0629 -0.2741  0.0639  0.3842  3.9308 
+    ## 
+    ## Random effects:
+    ##  Groups   Name        Variance Std.Dev.
+    ##  ANIMAL   (Intercept) 0.05937  0.2437  
+    ##  Residual             0.03874  0.1968  
+    ## Number of obs: 1060, groups:  ANIMAL, 746
+    ## 
+    ## Fixed effects:
+    ##                          Estimate Std. Error t value Pr(>|z|)    
+    ## (Intercept)             8.238e-02  2.414e-02   3.412 0.000644 ***
+    ## N_DEHORNINGS2           1.236e-01  2.877e-02   4.296 1.74e-05 ***
+    ## N_DEHORNINGS3           4.455e-01  4.142e-02  10.755  < 2e-16 ***
+    ## CALC_AGE               -8.134e-04  1.382e-05 -58.865  < 2e-16 ***
+    ## B_QUARTER2             -6.703e-02  2.556e-02  -2.623 0.008728 ** 
+    ## B_QUARTER3              2.050e-02  3.182e-02   0.644 0.519322    
+    ## B_QUARTER4             -3.241e-02  3.017e-02  -1.074 0.282787    
+    ## N_DEHORNINGS2:CALC_AGE  7.351e-04  1.500e-05  48.990  < 2e-16 ***
+    ## N_DEHORNINGS3:CALC_AGE  6.127e-04  1.748e-05  35.051  < 2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Correlation of Fixed Effects:
+    ##                (Intr) N_DEHORNINGS2 N_DEHORNINGS3 CALC_A B_QUARTER2
+    ## N_DEHORNINGS2  -0.218                                              
+    ## N_DEHORNINGS3  -0.058  0.309                                       
+    ## CALC_AGE       -0.420 -0.124        -0.257                         
+    ## B_QUARTER2     -0.443 -0.017        -0.088         0.013           
+    ## B_QUARTER3     -0.327  0.011        -0.021        -0.064  0.389    
+    ## B_QUARTER4     -0.402  0.068         0.017        -0.047  0.434    
+    ## N_DEHORNINGS2:  0.145 -0.665         0.001        -0.305 -0.020    
+    ## N_DEHORNINGS3:  0.048 -0.072        -0.744        -0.146  0.036    
+    ##                B_QUARTER3 B_QUARTER4 N_DEHORNINGS2:
+    ## N_DEHORNINGS2                                      
+    ## N_DEHORNINGS3                                      
+    ## CALC_AGE                                           
+    ## B_QUARTER2                                         
+    ## B_QUARTER3                                         
+    ## B_QUARTER4      0.324                              
+    ## N_DEHORNINGS2: -0.044     -0.058                   
+    ## N_DEHORNINGS3: -0.008      0.017      0.128        
+    ## convergence code: 0
+    ## Model failed to converge with max|grad| = 138.599 (tol = 0.001, component 1)
+    ## Model is nearly unidentifiable: very large eigenvalue
+    ##  - Rescale variables?
+    ## Model is nearly unidentifiable: large eigenvalue ratio
+    ##  - Rescale variables?
+
+    ## $emtrends
+    ##  N_DEHORNINGS CALC_AGE.trend       SE  df asymp.LCL asymp.UCL
+    ##  1                 -8.13e-04 1.38e-05 Inf -0.000841 -0.000786
+    ##  2                 -7.83e-05 1.70e-05 Inf -0.000112 -0.000045
+    ##  3                 -2.01e-04 2.06e-05 Inf -0.000241 -0.000160
+    ## 
+    ## Results are averaged over the levels of: B_QUARTER 
+    ## Trends are based on the log (transformed) scale 
+    ## Confidence level used: 0.95 
+    ## 
+    ## $contrasts
+    ##  contrast  estimate       SE  df z.ratio p.value
+    ##  1 - 2    -0.000735 1.50e-05 Inf -48.990 <.0001 
+    ##  1 - 3    -0.000613 1.75e-05 Inf -35.051 <.0001 
+    ##  2 - 3     0.000122 2.15e-05 Inf   5.681 <.0001 
+    ## 
+    ## Results are averaged over the levels of: B_QUARTER 
+    ## P value adjustment: tukey method for comparing a family of 3 estimates

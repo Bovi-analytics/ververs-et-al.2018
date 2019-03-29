@@ -30,6 +30,10 @@ if (!require("car")) {
   install.packages("car", dependencies = TRUE)
   library(car)
 }
+if (!require("mvtnorm")) {
+  install.packages("mvtnorm", dependencies = TRUE)
+  library(mvtnorm)
+}
 # sjPlot
 if (!require("sjPlot")) {
   install.packages("sjPlot", dependencies = TRUE)
@@ -146,7 +150,7 @@ xtabs(~C_QUARTER+N_DEHORNINGS, df.cv.cows)
 
 ## Data transformations of continuous variables
 
-```{r}
+```{r fig.height=5, fig.width=10}
 df.cv.cows$CALC_ARRIVAL_BC <- boxcoxTransform(df.cv.cows$CALC_ARRIVAL, lambda = 1)
 df.cv.cows$CALC_ARRIVAL_BC_STD <- scale(df.cv.cows$CALC_ARRIVAL_BC)
 hist(df.cv.cows$CALC_ARRIVAL)
@@ -203,36 +207,36 @@ It seems that the random effect GLMM is increasing the model fit.  Hence we will
 ### Univariate models
 
 ```{r, echo=FALSE}
-summary(glmer1 <- glmer(G_TOTAL ~ N_DEHORNINGS + (1| ANIMAL), 
+glmer1 <- glmer(G_TOTAL ~ N_DEHORNINGS + (1| ANIMAL), 
                 df.cv.cows, 
                 family = gaussian(link="log"),
                 control=glmerControl(optimizer="bobyqa")
-                  ))
-summary(glmer2 <- glmer(G_TOTAL ~ CALC_ARRIVAL_BC_STD + (1| ANIMAL), 
+                  )
+glmer2 <- glmer(G_TOTAL ~ CALC_ARRIVAL_BC_STD + (1| ANIMAL), 
                 df.cv.cows, 
                 family = gaussian(link="log"),
                 control=glmerControl(optimizer="bobyqa")
-                ))
-summary(glmer3 <- glmer(G_TOTAL ~ CALC_PARITY + (1| ANIMAL), 
+                )
+glmer3 <- glmer(G_TOTAL ~ CALC_PARITY + (1| ANIMAL), 
                 df.cv.cows, 
                 family = gaussian(link="log"),
                 control=glmerControl(optimizer="bobyqa")
-                  ))
-summary(glmer4 <- glmer(G_TOTAL ~ DIM_DEHORN_BC_STD + (1| ANIMAL), 
+                  )
+glmer4 <- glmer(G_TOTAL ~ DIM_DEHORN_BC_STD + (1| ANIMAL), 
                 df.cv.cows, 
                 family = gaussian(link="log"),
                 control=glmerControl(optimizer="bobyqa")
-                  ))
-summary(glmer5 <- glmer(G_TOTAL ~ DH_QUARTER + (1| ANIMAL), 
+                  )
+glmer5 <- glmer(G_TOTAL ~ DH_QUARTER + (1| ANIMAL), 
                 df.cv.cows, 
                 family = gaussian(link="log"),
                 control=glmerControl(optimizer="bobyqa")
-                ))
-summary(glmer6 <- glmer(G_TOTAL ~ C_QUARTER + (1| ANIMAL), 
+                )
+glmer6 <- glmer(G_TOTAL ~ C_QUARTER + (1| ANIMAL), 
                 df.cv.cows, 
                 family = gaussian(link="log"),
                 control=glmerControl(optimizer="bobyqa")
-                ))
+                )
 
 ```
 
@@ -280,7 +284,7 @@ In the text it will say that "the quarter of dehorning (P<2e-16)" had on overall
 
 To understand the effect of the interaction, an effects plot was created
 
-```{r}
+```{r fig.height=5, fig.width=10}
 plot(effect("DH_QUARTER:DIM_DEHORN_BC_STD", 
             glmer10, 
             multiline=TRUE),
@@ -291,7 +295,7 @@ plot(effect("DH_QUARTER:DIM_DEHORN_BC_STD",
 
 Next piece is used to show it on non transformed scale
 
-```{r}
+```{r fig.height=5, fig.width=10}
 glmer10b <- glmer(G_TOTAL~ 
                         DH_QUARTER*DIM_DEHORN + 
                         (1|ANIMAL), 
@@ -321,18 +325,7 @@ Anova(glmer10)
 Least square means, Tukey adjusted
 
 ```{r, echo=FALSE}
-
 lsmeans(glmer10b, pairwise~DH_QUARTER, type = "response", adjust = "tukey" )
-
-if (!require("multcompView")) {
-  install.packages("multcompView", dependencies = TRUE)
-  library(multcompView)
-}
-## http://rcompanion.org/handbook/G_06.html
-##cld(lsmeans(glmer10b, pairwise~DH_QUARTER),
-##          alpha=0.05,
-##          Letters=letters,
-##          adjust="tukey")
 ```
 
 # Hypothesis 2 - Factors influencing the total growth of the horn in males and females
@@ -474,7 +467,7 @@ The model with the interaction fits best, lowest AIC
 
 To understand the effect of the interaction, an effects plot was created
 
-```{r}
+```{r fig.height=5, fig.width=10}
 plot(effect("N_DEHORNINGS:CALC_AGE_BC_STD", 
             glmer11, 
             #xlevels=list(CALC_ARRIVAL=900:2000), 
@@ -486,7 +479,7 @@ plot(effect("N_DEHORNINGS:CALC_AGE_BC_STD",
 
 Next piece is used to show it on non transformed scale
 
-```{r}
+```{r fig.height=5, fig.width=10}
 glmer11b <- glmer(G_TOTAL ~ N_DEHORNINGS*CALC_AGE + B_QUARTER    
                          +  (1| ANIMAL), 
                 df.cv.all, 
@@ -509,31 +502,29 @@ The [least square means](https://en.wikipedia.org/wiki/Least_squares) are constr
 This is the overal P-value per variables
 
 ```{r, echo=FALSE}
-Anova(glmer11)
+Anova(glmer11b)
 ```
 
 Least square means, Tukey adjusted
 
 ```{r, echo=FALSE}
 
-lsmeans(glmer11, pairwise~N_DEHORNINGS, type = "response", adjust = "tukey" )
-lsmeans(glmer11, pairwise~B_QUARTER, type = "response", adjust = "tukey")
-# If you need the subscripts which differ
-# cld(lsmeans(glmer11, pairwise~N_DEHORNINGS),
-#           alpha=0.05,
-#           Letters=letters,
-#           adjust="tukey")
-# cld(lsmeans(glmer11, pairwise~B_QUARTER),
-#           alpha=0.05,
-#           Letters=letters,
-#           adjust="tukey")
+lsmeans(glmer11b, pairwise~N_DEHORNINGS, type = "response", adjust = "tukey" )
+lsmeans(glmer11b, pairwise~B_QUARTER, type = "response", adjust = "tukey")
+
+```
+### Interaction trends
+
+```{r, echo=FALSE}
+summary(glmer11b)
+emtrends(glmer11b, pairwise ~ N_DEHORNINGS, var = "CALC_AGE")
 ```
 
 # Hypothesis 3 - Factors influencing the growth of the anterior horn weight in males and females
 
 ## Data preparation
 
-```{r, echo=TRUE}
+```{r fig.height=5, fig.width=10, echo=TRUE}
 df.cv.all.f <- na.omit(df.cv[df.cv$G_AH_W < 100,
                              (names(df.cv) %in% c("ANIMAL",
                                                   "CALC_AGE",
@@ -557,7 +548,7 @@ hist(log10(df.cv.all.f$G_AH_W),
 
 ## Data transformations of continuous variables
 
-```{r}
+```{r fig.height=5, fig.width=10}
 df.cv.all.f$CALC_AGE_BC <- boxcoxTransform(df.cv.all.f$CALC_AGE, lambda = .25)
 df.cv.all.f$CALC_AGE_BC_STD <- scale(df.cv.all.f$CALC_AGE_BC)
 hist(df.cv.all.f$CALC_AGE)
@@ -600,21 +591,21 @@ The GLMM performs better
 ### Univariate models
 
 ```{r, echo=FALSE}
-summary(glmer1 <- glmer(G_AH_W~ N_DEHORNINGS + (1 | ANIMAL), 
+glmer1 <- glmer(G_AH_W~ N_DEHORNINGS + (1 | ANIMAL), 
                     df.cv.all.f, 
-                    family = gaussian(link="log")))
-summary(glmer2 <- glmer(G_AH_W~ CALC_AGE_BC_STD + (1 | ANIMAL), 
+                    family = gaussian(link="log"))
+glmer2 <- glmer(G_AH_W~ CALC_AGE_BC_STD + (1 | ANIMAL), 
                     df.cv.all.f, 
-                    family = gaussian(link="log")))
-summary(glmer3 <- glmer(G_AH_W~ DH_QUARTER + (1 | ANIMAL), 
+                    family = gaussian(link="log"))
+glmer3 <- glmer(G_AH_W~ DH_QUARTER + (1 | ANIMAL), 
                     df.cv.all.f, 
-                    family = gaussian(link="log")))
-summary(glmer4 <- glmer(G_AH_W~ B_QUARTER + (1 | ANIMAL), 
+                    family = gaussian(link="log"))
+glmer4 <- glmer(G_AH_W~ B_QUARTER + (1 | ANIMAL), 
                     df.cv.all.f, 
-                    family = gaussian(link="log")))
-summary(glmer5 <- glmer(G_AH_W~ GENDER + (1 | ANIMAL), 
+                    family = gaussian(link="log"))
+glmer5 <- glmer(G_AH_W~ GENDER + (1 | ANIMAL), 
                     df.cv.all.f, 
-                    family = gaussian(link="log")))
+                    family = gaussian(link="log"))
 ```
 
 ### Univariate model comparison
@@ -638,7 +629,7 @@ Anova(glmer6, test = "Chisq")
 
 ### Interaction modelling
 
-```{r}
+```{r fig.height=5, fig.width=10}
 summary(glmer7 <- glmer(G_AH_W ~ 
                           N_DEHORNINGS*CALC_AGE_BC_STD +
                           B_QUARTER +
@@ -657,7 +648,7 @@ plot(effect("N_DEHORNINGS:CALC_AGE_BC_STD",
 
 Next piece is used to show it on non transformed scale
 
-```{r}
+```{r fig.height=5, fig.width=10}
 glmer7b <- glmer(G_AH_W~ 
                         N_DEHORNINGS*CALC_AGE + 
                         B_QUARTER + 
@@ -678,24 +669,22 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
 ### Least square means
 
 ```{r, echo=FALSE}
-lsmeans(glmer7, pairwise~N_DEHORNINGS, type = "response", adjust="tukey")
-lsmeans(glmer7, pairwise~ B_QUARTER, type = "response")
-# If you need the subscripts which differ
-# cld(lsmeans(glmer7, pairwise~N_DEHORNINGS),
-#           alpha=0.05,
-#           Letters=letters,
-#           adjust="tukey")
-# cld(lsmeans(glmer7, pairwise~B_QUARTER),
-#           alpha=0.05,
-#           Letters=letters,
-#           adjust="tukey")
+lsmeans(glmer7b, pairwise~N_DEHORNINGS, type = "response", adjust="tukey")
+lsmeans(glmer7b, pairwise~ B_QUARTER, type = "response")
+```
+
+### Interaction estimates
+
+```{r, echo=FALSE}
+summary(glmer7b)
+emtrends(glmer7b, pairwise ~ N_DEHORNINGS, var = "CALC_AGE")
 ```
 
 # Hypothesis 4 - Factors influencing the growth of the anterior horn length in males and females
 
 ## Data preparation
 
-```{r, echo=TRUE}
+```{r fig.height=5, fig.width=10, echo=TRUE}
 df.cv.all.f.l <- na.omit(df.cv[df.cv$G_AH_L < 10,
                                (names(df.cv) %in% c("ANIMAL",
                                                     "CALC_AGE", 
@@ -719,7 +708,7 @@ hist(log10(df.cv.all.f.l$G_AH_L),
 
 ## Data transformations of continuous variables
 
-```{r}
+```{r fig.height=5, fig.width=10}
 df.cv.all.f.l$CALC_AGE_BC <- boxcoxTransform(df.cv.all.f.l$CALC_AGE, lambda = .25)
 df.cv.all.f.l$CALC_AGE_BC_STD <- scale(df.cv.all.f.l$CALC_AGE_BC)
 hist(df.cv.all.f.l$CALC_AGE)
@@ -763,31 +752,31 @@ The GLMM performs better
 
 
 ```{r, echo=FALSE}
-summary(glmer1 <- glmer(G_AH_L~ N_DEHORNINGS + (1|ANIMAL), 
+glmer1 <- glmer(G_AH_L~ N_DEHORNINGS + (1|ANIMAL), 
                         df.cv.all.f.l, 
                         family = gaussian(link="log"),
                         control=glmerControl(optimizer="bobyqa")
-                        ))
-summary(glmer2 <- glmer(G_AH_L~ CALC_AGE_BC_STD + (1|ANIMAL), 
+                        )
+glmer2 <- glmer(G_AH_L~ CALC_AGE_BC_STD + (1|ANIMAL), 
                         df.cv.all.f.l, 
                         family = gaussian(link="log"),
                         control=glmerControl(optimizer="bobyqa")
-                        ))
-summary(glmer3 <- glmer(G_AH_L~ DH_QUARTER + (1|ANIMAL), 
+                        )
+glmer3 <- glmer(G_AH_L~ DH_QUARTER + (1|ANIMAL), 
                         df.cv.all.f.l, 
                         family = gaussian(link="log"),
                         control=glmerControl(optimizer="bobyqa")
-                        ))
-summary(glmer4 <- glmer(G_AH_L~ B_QUARTER + (1|ANIMAL), 
+                        )
+glmer4 <- glmer(G_AH_L~ B_QUARTER + (1|ANIMAL), 
                         df.cv.all.f.l, 
                         family = gaussian(link="log"),
                         control=glmerControl(optimizer="bobyqa")
-                        ))
-summary(glmer5 <- glmer(G_AH_L~ GENDER + (1|ANIMAL), 
+                        )
+glmer5 <- glmer(G_AH_L~ GENDER + (1|ANIMAL), 
                         df.cv.all.f.l, 
                         family = gaussian(link="log"),
                         control=glmerControl(optimizer="bobyqa")
-                        ))
+                        )
 ```
 
 ### Univariate model comparison
@@ -807,17 +796,16 @@ summary(glmer6 <- glmer(G_AH_L~ N_DEHORNINGS +
                         family = gaussian(link="log"),
                         control=glmerControl(optimizer="bobyqa")
                         ))
-anova(glmer6, test = "Chisq")
+Anova(glmer6, test = "Chisq")
 ```
 
 ## Final model selection
 
 ### Interaction modelling
 
-```{r}
+```{r fig.height=5, fig.width=10}
 summary(glmer8 <- glmer(G_AH_L~ 
                         N_DEHORNINGS*CALC_AGE_BC_STD + 
-                        B_QUARTER + 
                         (1|ANIMAL), 
                       df.cv.all.f.l, 
                       family = gaussian(link="log"),
@@ -834,10 +822,9 @@ plot(effect("N_DEHORNINGS:CALC_AGE_BC_STD",
 
 Next piece is used to show it on non transformed scale
 
-```{r}
+```{r fig.height=5, fig.width=10}
 glmer8b <- glmer(G_AH_L~ 
                         N_DEHORNINGS*CALC_AGE + 
-                        B_QUARTER + 
                         (1|ANIMAL), 
                       df.cv.all.f.l, 
                       family = gaussian(link="log"),
@@ -856,24 +843,22 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
 ### Least square means
 
 ```{r, echo=FALSE}
-lsmeans(glmer8, pairwise~N_DEHORNINGS, type = "response", adjust="tukey")
-lsmeans(glmer8, pairwise~ B_QUARTER, type = "response")
-# If you need the subscripts which differ
-# cld(lsmeans(glmer8, pairwise~N_DEHORNINGS),
-#           alpha=0.05,
-#           Letters=letters,
-#           adjust="tukey")
-# cld(lsmeans(glmer8, pairwise~B_QUARTER),
-#           alpha=0.05,
-#           Letters=letters,
-#           adjust="tukey")
+lsmeans(glmer8b, ~N_DEHORNINGS|CALC_AGE, type = "response", adjust="tukey")
 ```
+
+### Interaction estimates
+
+```{r, echo=FALSE}
+summary(glmer8b)
+emtrends(glmer8b, pairwise ~ N_DEHORNINGS, var = "CALC_AGE")
+```
+
 
 # Hypothesis 5 - Factors influencing the growth of the anterior horn circumference (mm/day) in males and females 
 
 ## Data preparation
 
-```{r, echo=TRUE}
+```{r fig.height=5, fig.width=10, echo=TRUE}
 df.cv.all.f.c <- na.omit(df.cv[df.cv$G_AH_C < 100,(names(df.cv) %in% c(
                                                                      "ANIMAL",
                                                                      "CALC_AGE", 
@@ -940,36 +925,36 @@ The GLMM performs better
 ### Univariate models
 
 ```{r, echo=FALSE}
-summary(glmer1 <- glmer(G_AH_C~ 
+glmer1 <- glmer(G_AH_C~ 
                           N_DEHORNINGS + (1|ANIMAL), 
                         df.cv.all.f.c, 
                         family = gaussian(link="log"),
                         control=glmerControl(optimizer="bobyqa")
-                        ))
-summary(glmer2 <- glmer(G_AH_C~ 
+                        )
+glmer2 <- glmer(G_AH_C~ 
                           CALC_AGE_BC_STD + (1|ANIMAL), 
                         df.cv.all.f.c, 
                         family = gaussian(link="log"),
                         control=glmerControl(optimizer="bobyqa")
-                        ))
-summary(glmer3 <- glmer(G_AH_C~ 
+                        )
+glmer3 <- glmer(G_AH_C~ 
                           DH_QUARTER + (1|ANIMAL), 
                         df.cv.all.f.c, 
                         family = gaussian(link="log"),
                         control=glmerControl(optimizer="bobyqa")
-                        ))
-summary(glmer4 <- glmer(G_AH_C~ 
+                        )
+glmer4 <- glmer(G_AH_C~ 
                           B_QUARTER + (1|ANIMAL), 
                         df.cv.all.f.c, 
                         family = gaussian(link="log"),
                         control=glmerControl(optimizer="bobyqa")
-                        ))
-summary(glmer5 <- glmer(G_AH_C~ 
+                        )
+glmer5 <- glmer(G_AH_C~ 
                           GENDER + (1|ANIMAL), 
                         df.cv.all.f.c, 
                         family = gaussian(link="log"),
                         control=glmerControl(optimizer="bobyqa")
-                        ))
+                        )
 ```
 
 ### Univariate model comparison
@@ -996,7 +981,7 @@ Anova(glmer7, test = "Chisq")
 
 ### Interaction modelling
 
-```{r}
+```{r fig.height=5, fig.width=10}
 summary(glmer8 <- glmer(G_AH_C~ 
                           N_DEHORNINGS*CALC_AGE_BC_STD + 
                           (1|ANIMAL), 
@@ -1016,7 +1001,7 @@ plot(effect("N_DEHORNINGS:CALC_AGE_BC_STD",
 
 Next piece is used to show it on non transformed scale
 
-```{r}
+```{r fig.height=5, fig.width=10}
 glmer8b <- glmer(G_AH_C~ 
                         N_DEHORNINGS*CALC_AGE + 
                         B_QUARTER + 
@@ -1037,12 +1022,14 @@ plot(effect("N_DEHORNINGS:CALC_AGE",
 ### Least square means
 
 ```{r, echo=FALSE}
-lsmeans(glmer8, pairwise~N_DEHORNINGS, type = "response", adjust="tukey")
-# If you need the subscripts which differ
-# cld(lsmeans(glmer8, pairwise~N_DEHORNINGS),
-#           alpha=0.05,
-#           Letters=letters,
-#           adjust="tukey")
+lsmeans(glmer8b, pairwise~N_DEHORNINGS, type = "response", adjust="tukey")
+
 ```
 
+### Interaction estimates
+
+```{r, echo=FALSE}
+summary(glmer8b)
+emtrends(glmer8b, pairwise ~ N_DEHORNINGS, var = "CALC_AGE")
+```
 
