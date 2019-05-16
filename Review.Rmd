@@ -989,7 +989,7 @@ summary(glmer8 <- glmer(G_AH_C~
                         family = gaussian(link="log"),
                         control=glmerControl(optimizer="bobyqa")
                         ))
-anova(glmer8, test = "Chisq")
+Anova(glmer8, test = "Chisq")
 plot(effect("N_DEHORNINGS:CALC_AGE_BC_STD", 
             glmer8, 
             #xlevels=list(CALC_ARRIVAL=900:2000), 

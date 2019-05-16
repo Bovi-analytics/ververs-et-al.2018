@@ -2116,14 +2116,18 @@ summary(glmer8 <- glmer(G_AH_C~
     ## N_DEHORNINGS3: -0.266  0.131        -0.484        -0.420  0.486
 
 ``` r
-anova(glmer8, test = "Chisq")
+Anova(glmer8, test = "Chisq")
 ```
 
-    ## Analysis of Variance Table
-    ##                              Df Sum Sq Mean Sq F value
-    ## N_DEHORNINGS                  2 40.640 20.3199 532.147
-    ## CALC_AGE_BC_STD               1  8.202  8.2019 214.795
-    ## N_DEHORNINGS:CALC_AGE_BC_STD  2  6.290  3.1450  82.362
+    ## Analysis of Deviance Table (Type II Wald chisquare tests)
+    ## 
+    ## Response: G_AH_C
+    ##                                Chisq Df Pr(>Chisq)    
+    ## N_DEHORNINGS                 1846.13  2  < 2.2e-16 ***
+    ## CALC_AGE_BC_STD               353.10  1  < 2.2e-16 ***
+    ## N_DEHORNINGS:CALC_AGE_BC_STD  221.86  2  < 2.2e-16 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 ``` r
 plot(effect("N_DEHORNINGS:CALC_AGE_BC_STD", 
